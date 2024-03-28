@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/services.dart'; // Import for rootBundle
-import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 
 
 class BarcodeScanning extends StatefulWidget {
@@ -16,6 +15,32 @@ class BarcodeScanning extends StatefulWidget {
   @override
   BarcodeScannerScreenState createState() => BarcodeScannerScreenState();
 }
+
+
+class CameraOverlayPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double screenWidth = size.width;
+    final double screenHeight = size.height;
+    const double squareSize = 300; // Adjust square size as needed
+    const double sideRectWidth = 40;
+
+    final Paint paint = Paint()..color = Colors.white;
+    final Rect topRect = Rect.fromLTWH(0, 0, screenWidth, (screenHeight - squareSize) / 3.5);
+    final Rect bottomRect = Rect.fromLTWH(0, (screenHeight + squareSize) / 2.5, screenWidth, (screenHeight - squareSize) );
+    final Rect leftRect = Rect.fromLTWH(0, ((screenHeight - squareSize) / 3.5) - 30, sideRectWidth, squareSize+100);
+    final Rect rightRect = Rect.fromLTWH(screenWidth - sideRectWidth, ((screenHeight - squareSize) / 3.5) -30, sideRectWidth, squareSize+100);
+
+    canvas.drawRect(topRect, paint);
+    canvas.drawRect(bottomRect, paint);
+    canvas.drawRect(leftRect, paint);
+    canvas.drawRect(rightRect, paint);
+  }
+
+  @override
+  bool shouldRepaint(CameraOverlayPainter oldDelegate) => false;
+}
+
 
 class BarcodeScannerScreenState extends State<BarcodeScanning> {
   late CameraController _controller;
@@ -29,6 +54,11 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
   DeviceOrientation.portraitDown: 180,
   DeviceOrientation.landscapeRight: 270,
 };
+
+  //Impact Colours
+  Color impactGrey = Color(0xFFC9C8CA);
+  Color impactRed = Color(0xFFF4333C);
+  Color impactBlack = Color(0xFF040404);
 
   @override
   void initState() {
@@ -62,38 +92,110 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Barcode Scanner')),
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return CameraPreview(_controller);
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
+      appBar: AppBar(
+        backgroundColor: impactGrey,
+        leading: IconButton(
+        icon: Icon(Icons.menu),
+        onPressed: (){},
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          try {
-            //Last captured frame is prepared for barcode scan
-            final inputImage = _inputImageFromCameraImage(_capturedImage);
-          
-            //Check if an image has been successfully passed in 
-            if (inputImage == null) return;
-            
-            //Scan the barcode
-            scanBarcodes(inputImage);
+      actions: [
+          IconButton(
+            icon: Icon(Icons.home), // Add the home button icon
+            onPressed: () {
+              // Add functionality for the home button here
+            },
+          ),
+      ],
+      ),
+      
+      body: Stack(
+        children: [
+          // Camera preview
+          FutureBuilder<void>(
+            future: _initializeControllerFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return CameraPreview(_controller);
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+          // Transparent area with white background
+          CustomPaint(
+            size: MediaQuery.of(context).size,
+            painter: CameraOverlayPainter(),
+          ),
+          // Image overlay
+           Positioned(
+            top: 50, // Adjust the top padding as needed
+            left: 40, // Adjust the left padding as needed
+            right: 40, // Adjust the right padding as needed
+            child: Text(
+              'Product Barcode Scanner',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: impactBlack,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: MediaQuery.of(context).size.height / 7, // Adjust the value to position the image vertically
+            left: 0, // Align the image to the left edge
+            right: 0, // Align the image to the right edge
+            child: Center(
+              child: Image.asset(
+                'assets/images/impact_logo.png', // Replace 'your_image.png' with your image asset path
+                width: 220, // Adjust width as needed
+                height: 220, // Adjust height as needed
+              ),
+            ),
+          ),
 
+          Positioned(
+            bottom: MediaQuery.of(context).size.height / 10, // Adjust the value to position the button vertically
+            left: 40, // Adjust the left padding as needed
+            right: 40, // Adjust the right padding as needed
+            child: Center(
+              child: Container(
+                width: double.infinity,
+                height: 60,
+                color: Colors.black,
+                child: TextButton(
+                  onPressed: () async {
+                    try {
+                      // Last captured frame is prepared for barcode scan
+                      final inputImage = _inputImageFromCameraImage(_capturedImage);
+                      // Check if an image has been successfully passed in 
+                      if (inputImage == null) return;
+                      // Scan the barcode
+                      scanBarcodes(inputImage);
                     } catch (e) {
-            print(e);
-          }
-        },
-        child: const Icon(Icons.camera),
-),
+                      print(e);
+                    }
+                  },
+                  child: Text(
+                    'SCAN',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+        ],
+      ),
+      
     );
   }
 
+
+
+  
 //Method to begin capturing images
 void _startImageStream() {
     _controller.startImageStream((CameraImage image) {
@@ -215,21 +317,89 @@ class DisplayBarcode extends StatelessWidget {
 //This is a temporary screen for demo purposes
 class ResultsScreen extends StatelessWidget {
 
+//Impact Colours
+  final Color impactGrey = Color(0xFFC9C8CA);
+  final Color impactRed = Color(0xFFF4333C);
+  final Color impactBlack = Color(0xFF040404);
+
   final String? code; // Parameter to hold the word
 
   // Constructor to receive the word parameter
-  const ResultsScreen({super.key, required this.code});
+  ResultsScreen({super.key, required this.code});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Barcode Results!'),
+        backgroundColor: impactGrey,
+        leading: IconButton(
+        icon: Icon(Icons.menu),
+        onPressed: (){},
+      ),
+      actions: [
+          IconButton(
+            icon: Icon(Icons.home), // Add the home button icon
+            onPressed: () {
+              // Add functionality for the home button here
+            },
+          ),
+      ],
       ),
       body: Center(
         child: Text(
           code!,
           style: const TextStyle(fontSize: 24),
+        ),
+      ),
+    );
+  }
+}
+
+
+class BlankScreenTemplate extends StatelessWidget {
+
+  //Impact Colours
+  final Color impactGrey = Color(0xFFC9C8CA);
+  final Color impactRed = Color(0xFFF4333C);
+  final Color impactBlack = Color(0xFF040404);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white, // Set background color to white
+      appBar: AppBar(
+        backgroundColor: impactGrey,
+        leading: IconButton(
+        icon: Icon(Icons.menu),
+        onPressed: (){},
+      ),
+      actions: [
+          IconButton(
+            icon: Icon(Icons.home), // Add the home button icon
+            onPressed: () {
+              // Add functionality for the home button here
+            },
+          ),
+      ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // Add your additional items here
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Your Content Goes Here',
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            // Add more widgets as needed
+          ],
         ),
       ),
     );
