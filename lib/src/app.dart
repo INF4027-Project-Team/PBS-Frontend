@@ -2,8 +2,11 @@ import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
-import 'package:image/image.dart' as img;
-import 'package:flutter/services.dart'; // Import for rootBundle
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+
+import 'camera_overlay_painter.dart';
+import 'screen_display_product.dart'; // Import for rootBundle
 
 
 class BarcodeScanning extends StatefulWidget {
@@ -14,31 +17,6 @@ class BarcodeScanning extends StatefulWidget {
   final CameraDescription camera;
   @override
   BarcodeScannerScreenState createState() => BarcodeScannerScreenState();
-}
-
-
-class CameraOverlayPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final double screenWidth = size.width;
-    final double screenHeight = size.height;
-    const double squareSize = 300; // Adjust square size as needed
-    const double sideRectWidth = 40;
-
-    final Paint paint = Paint()..color = Colors.white;
-    final Rect topRect = Rect.fromLTWH(0, 0, screenWidth, (screenHeight - squareSize) / 3.5);
-    final Rect bottomRect = Rect.fromLTWH(0, (screenHeight + squareSize) / 2.5, screenWidth, (screenHeight - squareSize) );
-    final Rect leftRect = Rect.fromLTWH(0, ((screenHeight - squareSize) / 3.5) - 30, sideRectWidth, squareSize+100);
-    final Rect rightRect = Rect.fromLTWH(screenWidth - sideRectWidth, ((screenHeight - squareSize) / 3.5) -30, sideRectWidth, squareSize+100);
-
-    canvas.drawRect(topRect, paint);
-    canvas.drawRect(bottomRect, paint);
-    canvas.drawRect(leftRect, paint);
-    canvas.drawRect(rightRect, paint);
-  }
-
-  @override
-  bool shouldRepaint(CameraOverlayPainter oldDelegate) => false;
 }
 
 
@@ -53,44 +31,23 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
   DeviceOrientation.landscapeLeft: 90,
   DeviceOrientation.portraitDown: 180,
   DeviceOrientation.landscapeRight: 270,
-};
+  };
 
   //Impact Colours
-  Color impactGrey = Color(0xFFC9C8CA);
-  Color impactRed = Color(0xFFF4333C);
-  Color impactBlack = Color(0xFF040404);
+  Color impactGrey = const Color(0xFFC9C8CA);
+  Color impactRed = const Color(0xFFF4333C);
+  Color impactBlack = const Color(0xFF040404);
 
   @override
   void initState() {
     super.initState();
     _initializeCamera();
   }
-
-  //Function to set up camera and begin capturing images
-  Future<void> _initializeCamera() async {
-    _controller = CameraController(
-      widget.camera,
-      ResolutionPreset.veryHigh,
-      enableAudio: false,
-      imageFormatGroup: ImageFormatGroup.nv21,
-    );
-
-    _initializeControllerFuture = _controller.initialize();
-    await _initializeControllerFuture;
-    
-    _startImageStream();
-  }
-
-  //Function to shut down image capture and close camera
-  @override
-  void dispose() {
-    _stopImageStream();
-    _controller.dispose();
-    super.dispose();
-  }
-
+  
+  //Barcode scanning screen interface creation
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: impactGrey,
@@ -98,6 +55,7 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
         icon: Icon(Icons.menu),
         onPressed: (){},
       ),
+
       actions: [
           IconButton(
             icon: Icon(Icons.home), // Add the home button icon
@@ -110,6 +68,7 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
       
       body: Stack(
         children: [
+          
           // Camera preview
           FutureBuilder<void>(
             future: _initializeControllerFuture,
@@ -121,12 +80,14 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
               }
             },
           ),
-          // Transparent area with white background
+          
+          // Paint white borders around camera preview
           CustomPaint(
             size: MediaQuery.of(context).size,
             painter: CameraOverlayPainter(),
           ),
-          // Image overlay
+          
+          // Page heading
            Positioned(
             top: 50, // Adjust the top padding as needed
             left: 40, // Adjust the left padding as needed
@@ -140,6 +101,8 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
               ),
             ),
           ),
+
+          //Impact Logo
           Positioned(
             bottom: MediaQuery.of(context).size.height / 7, // Adjust the value to position the image vertically
             left: 0, // Align the image to the left edge
@@ -153,6 +116,7 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
             ),
           ),
 
+          //Scan Button
           Positioned(
             bottom: MediaQuery.of(context).size.height / 10, // Adjust the value to position the button vertically
             left: 40, // Adjust the left padding as needed
@@ -165,17 +129,30 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
                 child: TextButton(
                   onPressed: () async {
                     try {
+
                       // Last captured frame is prepared for barcode scan
                       final inputImage = _inputImageFromCameraImage(_capturedImage);
                       // Check if an image has been successfully passed in 
                       if (inputImage == null) return;
                       // Scan the barcode
-                      scanBarcodes(inputImage);
+                      List<Barcode> barcodesList = await scanBarcodes(inputImage);
+                      String? barcodeNumber = barcodesList.first.displayValue;
+                      
+                      //Barcode is posted to java server
+                      postToBackend(barcodeNumber);
+
+                      //Barcode is displayed on the results screen
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResultsScreen(code: barcodeNumber),
+                      ),
+                    );
                     } catch (e) {
                       print(e);
                     }
                   },
-                  child: Text(
+                  child: const Text(
                     'SCAN',
                     style: TextStyle(
                       color: Colors.white,
@@ -194,8 +171,33 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
   }
 
 
+/// ****************************Class Methods******************************************* 
 
+  //Function to set up camera and begin capturing images
+  Future<void> _initializeCamera() async {
+    _controller = CameraController(
+      widget.camera,
+      ResolutionPreset.veryHigh,
+      enableAudio: false,
+      imageFormatGroup: ImageFormatGroup.nv21,
+    );
+
+    _initializeControllerFuture = _controller.initialize();
+    await _initializeControllerFuture;
+    
+    _startImageStream();
+  }
+
+
+  //Function to shut down image capture and close camera
+  @override
+  void dispose() {
+    _stopImageStream();
+    _controller.dispose();
+    super.dispose();
+  }
   
+
 //Method to begin capturing images
 void _startImageStream() {
     _controller.startImageStream((CameraImage image) {
@@ -209,6 +211,7 @@ void _startImageStream() {
       });
     });
   }
+
 
   //Method to stop capturing images
   void _stopImageStream() {
@@ -228,19 +231,7 @@ Future<List<Barcode>> scanBarcodes(InputImage? inputImage) async {
       //Close scanner
       await barcodeScan.close();
 
-      //return list of decoded barcodes, this will need to be further developed later to return the specific code required
-      for (Barcode item in barcodes) {
-      
-      //Opens up the temporary screen that we are using to display the barcode values for demo purposes
-      //Btw this is a bad place to place this because in the case of two codes being relelvant it will open two screens... keep in mind and change moving forward
-      Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ResultsScreen(code: item.displayValue),
-              ),
-            );
-
-      }
+     
       return barcodes;
     } 
     catch (e) 
@@ -251,157 +242,62 @@ Future<List<Barcode>> scanBarcodes(InputImage? inputImage) async {
   }
 
 
+  //Post to backend
+  Future<void> postToBackend(String? stringToSend) async {
+    const url = 'http://192.168.1.149:8080/endpoint'; //Change the 192.168.1.149 to the IP of server computer
+    final response = await http.post(
+      Uri.parse(url),
+      body: {'stringData': stringToSend},
+    );
 
-//This is the method to prepare the images for barcode scanning
-InputImage? _inputImageFromCameraImage(CameraImage? image) {
-  if (image == null) return null;
+    if (response.statusCode == 200) {
+      print('String sent successfully');
+    } else {
+      print('Failed to send string. Status code: ${response.statusCode}');
+    }
+  }
 
-  //Save image format
-  final InputImageFormat? format = InputImageFormatValue.fromRawValue(image.format.raw);
-  
-  //Check that image is in correct format
-  if ((format == null) || (format != InputImageFormat.nv21)) return null;
 
-  //Save image plane
-  final plane = image.planes.first;
+  //This is the method to prepare the images for barcode scanning
+  InputImage? _inputImageFromCameraImage(CameraImage? image) {
+    if (image == null) return null;
 
-  //Calculate the rotation degree of camera
-  final sensorOrientation = widget.camera.sensorOrientation;
-  var rotationCompensation = _orientations[_controller!.value.deviceOrientation];
+    //Save image format
+    final InputImageFormat? format = InputImageFormatValue.fromRawValue(image.format.raw);
     
-  if (rotationCompensation == null) return null;
+    //Check that image is in correct format
+    if ((format == null) || (format != InputImageFormat.nv21)) return null;
 
-  rotationCompensation = (sensorOrientation - rotationCompensation + 360) % 360;
+    //Save image plane
+    final plane = image.planes.first;
 
-  //Save image rotation
-  InputImageRotation? rotation = InputImageRotationValue.fromRawValue(rotationCompensation);
-  
-  //Check that image rotation is valid
-  if (rotation == null) return null;
+    //Calculate the rotation degree of camera
+    final sensorOrientation = widget.camera.sensorOrientation;
+    var rotationCompensation = _orientations[_controller!.value.deviceOrientation];
+      
+    if (rotationCompensation == null) return null;
 
-  //Create the InputImage object using the above variables and then return it
-  return InputImage.fromBytes(
-    bytes: plane.bytes,
-    metadata: InputImageMetadata(
-      size: Size(image.width.toDouble(), image.height.toDouble()),
-      rotation: rotation, 
-      format: format,
-      bytesPerRow: plane.bytesPerRow,
-    ),
-  );
-}
+    rotationCompensation = (sensorOrientation - rotationCompensation + 360) % 360;
 
+    //Save image rotation
+    InputImageRotation? rotation = InputImageRotationValue.fromRawValue(rotationCompensation);
+    
+    //Check that image rotation is valid
+    if (rotation == null) return null;
 
-}
-
-
-//Class to display the barcode after has been captured... currently this class is not in use
-class DisplayBarcode extends StatelessWidget {
-  final img.Image cameraImage; // Processed CameraImage
-
-  const DisplayBarcode({Key? key, required this.cameraImage}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Processed Image')),
-      body: Center(
-        child: Image.memory(
-          Uint8List.fromList(img.encodePng(cameraImage)), // Convert Image to PNG bytes
-        ),
+    //Create the InputImage object using the above variables and then return it
+    return InputImage.fromBytes(
+      bytes: plane.bytes,
+      metadata: InputImageMetadata(
+        size: Size(image.width.toDouble(), image.height.toDouble()),
+        rotation: rotation, 
+        format: format,
+        bytesPerRow: plane.bytesPerRow,
       ),
     );
   }
-}
 
-//This is a temporary screen for demo purposes
-class ResultsScreen extends StatelessWidget {
-
-//Impact Colours
-  final Color impactGrey = Color(0xFFC9C8CA);
-  final Color impactRed = Color(0xFFF4333C);
-  final Color impactBlack = Color(0xFF040404);
-
-  final String? code; // Parameter to hold the word
-
-  // Constructor to receive the word parameter
-  ResultsScreen({super.key, required this.code});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: impactGrey,
-        leading: IconButton(
-        icon: Icon(Icons.menu),
-        onPressed: (){},
-      ),
-      actions: [
-          IconButton(
-            icon: Icon(Icons.home), // Add the home button icon
-            onPressed: () {
-              // Add functionality for the home button here
-            },
-          ),
-      ],
-      ),
-      body: Center(
-        child: Text(
-          code!,
-          style: const TextStyle(fontSize: 24),
-        ),
-      ),
-    );
-  }
 }
 
 
-class BlankScreenTemplate extends StatelessWidget {
 
-  //Impact Colours
-  final Color impactGrey = Color(0xFFC9C8CA);
-  final Color impactRed = Color(0xFFF4333C);
-  final Color impactBlack = Color(0xFF040404);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white, // Set background color to white
-      appBar: AppBar(
-        backgroundColor: impactGrey,
-        leading: IconButton(
-        icon: Icon(Icons.menu),
-        onPressed: (){},
-      ),
-      actions: [
-          IconButton(
-            icon: Icon(Icons.home), // Add the home button icon
-            onPressed: () {
-              // Add functionality for the home button here
-            },
-          ),
-      ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            // Add your additional items here
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Your Content Goes Here',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            // Add more widgets as needed
-          ],
-        ),
-      ),
-    );
-  }
-}
