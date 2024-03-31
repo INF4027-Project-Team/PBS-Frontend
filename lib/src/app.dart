@@ -244,14 +244,15 @@ Future<List<Barcode>> scanBarcodes(InputImage? inputImage) async {
 
   //Post to backend
   Future<void> postToBackend(String? stringToSend) async {
-    const url = 'http://192.168.1.149:8080/endpoint'; //Change the 192.168.1.149 to the IP of server computer
+    const url = 'http://192.168.1.149:8080/barcode'; //Change the 192.168.1.149 to the IP of server computer
     final response = await http.post(
       Uri.parse(url),
-      body: {'stringData': stringToSend},
+      body: stringToSend,
     );
 
     if (response.statusCode == 200) {
       print('String sent successfully');
+      print(response.body);
     } else {
       print('Failed to send string. Status code: ${response.statusCode}');
     }
