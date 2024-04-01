@@ -5,7 +5,7 @@ class BlankScreenTemplate extends StatelessWidget {
   //Impact Colours
   final Color impactGrey = Color(0xFFC9C8CA);
   final Color impactRed = Color(0xFFF4333C);
-  final Color impactBlack = Color(0xFF040404);
+   Color impactBlack = Color(0xFF040404);
 
   BlankScreenTemplate({super.key});
 
@@ -16,12 +16,12 @@ class BlankScreenTemplate extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: impactGrey,
         leading: IconButton(
-        icon: Icon(Icons.menu),
+        icon: Icon(Icons.menu, color: Colors.black),
         onPressed: (){},
       ),
       actions: [
           IconButton(
-            icon: Icon(Icons.home), // Add the home button icon
+            icon: Icon(Icons.home, color: Colors.black), // Add the home button icon
             onPressed: () {
               // Add functionality for the home button here
             },

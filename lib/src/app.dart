@@ -52,13 +52,13 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
       appBar: AppBar(
         backgroundColor: impactGrey,
         leading: IconButton(
-        icon: Icon(Icons.menu),
+        icon: Icon(Icons.menu, color: Colors.black),
         onPressed: (){},
       ),
 
       actions: [
           IconButton(
-            icon: Icon(Icons.home), // Add the home button icon
+            icon: Icon(Icons.home, color: Colors.black), // Add the home button icon
             onPressed: () {
               // Add functionality for the home button here
             },
@@ -141,13 +141,7 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
                       //Barcode is posted to java server
                       postToBackend(barcodeNumber);
 
-                      //Barcode is displayed on the results screen
-                      Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ResultsScreen(code: barcodeNumber),
-                      ),
-                    );
+                      
                     } catch (e) {
                       print(e);
                     }
@@ -252,7 +246,18 @@ Future<List<Barcode>> scanBarcodes(InputImage? inputImage) async {
 
     if (response.statusCode == 200) {
       print('String sent successfully');
-      print(response.body);
+      String jsonResult = response.body;
+      print(jsonResult);
+
+      //Barcode is displayed on the results screen
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResultsScreen(json: jsonResult),//(json: jsonResult),
+                      ),
+                    );
+
+
     } else {
       print('Failed to send string. Status code: ${response.statusCode}');
     }
