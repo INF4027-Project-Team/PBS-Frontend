@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 
 import 'src/app.dart';
 
+import 'src/screen_homepage.dart';
+import 'src/screen_login.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final cameras = await availableCameras();
@@ -10,9 +13,10 @@ void main() async {
   runApp(
     MaterialApp(
       theme: ThemeData.dark(),
-      home: BarcodeScanning(
-        camera: firstCamera,
-      ),
+     home: Login(),
+      //BarcodeScanning(
+    //    camera: firstCamera,
+   //   ),
     ),
   );
 }
