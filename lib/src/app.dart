@@ -38,6 +38,10 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
   Color impactRed = const Color(0xFFF4333C);
   Color impactBlack = const Color(0xFF040404);
 
+  //Other interface colours
+  Color softPurple = const Color(0xFFAA62B7);
+  Color gloomyPurple = const Color(0xFF8A4EDD);
+
   @override
   void initState() {
     super.initState();
@@ -87,11 +91,12 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
             painter: CameraOverlayPainter(),
           ),
           
+          /*
           // Page heading
            Positioned(
             top: 50, // Adjust the top padding as needed
-            left: 40, // Adjust the left padding as needed
-            right: 40, // Adjust the right padding as needed
+            left: 16, // Adjust the left padding as needed
+            right: 16, // Adjust the right padding as needed
             child: Text(
               'Product Barcode Scanner',
               style: TextStyle(
@@ -100,32 +105,36 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
                 color: impactBlack,
               ),
             ),
-          ),
+          ),*/
 
           //Impact Logo
           Positioned(
-            bottom: MediaQuery.of(context).size.height / 7, // Adjust the value to position the image vertically
+            top: 0, // Adjust the value to position the image vertically
             left: 0, // Align the image to the left edge
             right: 0, // Align the image to the right edge
             child: Center(
               child: Image.asset(
                 'assets/images/impact_logo.png', // Replace 'your_image.png' with your image asset path
-                width: 220, // Adjust width as needed
-                height: 220, // Adjust height as needed
+                width: 250, // Adjust width as needed
+                height: 250, // Adjust height as needed
               ),
             ),
           ),
 
           //Scan Button
           Positioned(
-            bottom: MediaQuery.of(context).size.height / 10, // Adjust the value to position the button vertically
-            left: 40, // Adjust the left padding as needed
-            right: 40, // Adjust the right padding as needed
+            bottom: MediaQuery.of(context).size.height / 15, // Adjust the value to position the button vertically
+            left: 10, // Adjust the left padding as needed
+            right: 10, // Adjust the right padding as needed
             child: Center(
               child: Container(
                 width: double.infinity,
                 height: 60,
-                color: Colors.black,
+                //color: softPurple,
+                decoration: BoxDecoration(
+                  color: impactRed,
+                  borderRadius: BorderRadius.circular(5.0), // Adjust the value to change the roundness
+                ),
                 child: TextButton(
                   onPressed: () async {
                     try {
