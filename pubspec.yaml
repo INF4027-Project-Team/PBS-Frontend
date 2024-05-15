@@ -20,6 +20,7 @@ dependencies:
   google_mlkit_barcode_scanning: ^0.10.0
   image: ^3.0.1
   http: 1.2.1
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -36,4 +37,5 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/barcode.jpg
-    - assets/images/impact_logo.png
+    - assets/images/impact_logo.webp
+    - assets/images/ebay_logo.png

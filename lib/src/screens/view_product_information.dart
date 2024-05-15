@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
+import 'package:google_fonts/google_fonts.dart';
+import '../objects/product.dart';
 
 class ResultsScreen extends StatelessWidget {
 
-//Impact Colours
+  //Impact Colours
   final Color impactGrey = const Color(0xFFC9C8CA);
   final Color impactRed = const Color(0xFFF4333C);
    final Color impactBlack = const Color(0xFF040404);
 
-    //Other interface colours
-  Color softPurple = const Color(0xFFAA62B7);
-  Color gloomyPurple = const Color(0xFF8A4EDD);
+  //Other interface colours
+  final Color softPurple = const Color(0xFFAA62B7);
+  final Color gloomyPurple = const Color(0xFF8A4EDD);
 
-  final Map<String, dynamic>? productDetails; // Parameter to hold the word
+  final Product productDetails; // Parameter to hold the word
 
   //ResultsScreen({super.key});
   // Constructor to receive the word parameter
-  ResultsScreen({Key? key, required String json})
-    : productDetails = jsonDecode(json),
-      super(key: key);
+  const ResultsScreen({super.key, required Product product})
+    : productDetails = product;
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +48,12 @@ class ResultsScreen extends StatelessWidget {
          Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            productDetails!['name'],
-            style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold, color: impactBlack),
+            productDetails.name,
+            style: GoogleFonts.montserrat(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
           ),
         ),
 
@@ -62,7 +66,7 @@ class ResultsScreen extends StatelessWidget {
               width: 180, // Take up roughly a third of the screen
               height: 180, // Make it square
               child: Image.network(
-              productDetails!['img'], // Replace with your image URL
+              productDetails.imagePath, // Replace with your image URL
               fit: BoxFit.cover, // Adjust image fit as needed
             ),
             ),
@@ -84,7 +88,7 @@ class ResultsScreen extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              "Manufacturer: "+ productDetails!['brand'],
+              "Brand: "+ productDetails.brand,
               style: TextStyle(fontSize: 18,  color: impactBlack),
             ),
           ),
@@ -108,7 +112,7 @@ class ResultsScreen extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Lowest Price: \$'+ productDetails!['price'],
+              'Price: \$${productDetails.price}',
               style: TextStyle(fontSize: 18,  color: impactBlack),
             ),
           ),
@@ -132,7 +136,7 @@ class ResultsScreen extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Highest Commision Rate: '+ productDetails!['rate']+"%",
+              "Commision Rate: ${ productDetails.commission}%",
               style: TextStyle(fontSize: 18,  color: impactBlack),
             ),
           ),
@@ -161,7 +165,7 @@ class ResultsScreen extends StatelessWidget {
                     },
                 
                 child: const Text(
-                    'View Offers',
+                    'Visit Product Page',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,

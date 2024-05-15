@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import '../app.dart';
+import 'package:camera/camera.dart';
 
 class HomePage extends StatelessWidget {
   // Impact Colours
-  final Color impactGrey = Color(0xFFC9C8CA);
-  final Color impactBlack = Color(0xFF040404);
+  final Color impactGrey = const Color(0xFFC9C8CA);
+  final Color impactBlack = const Color(0xFF040404);
 
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class HomePage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: impactGrey,
               ),
-              child: Text(
+              child: const Text(
                 'Menu',
                 style: TextStyle(
                   color: Colors.white,
@@ -83,7 +85,7 @@ class HomePage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: Image.asset(
-                  'assets/images/impact_logo.png', // Make sure this matches the file name in your assets directory
+                  'assets/images/impact_logo.webp', // Make sure this matches the file name in your assets directory
                   height: 50, // Adjust the height accordingly
                 ),
               ),
@@ -109,7 +111,14 @@ class HomePage extends StatelessWidget {
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               children: <Widget>[
-                _buildGridButton(Icons.camera_alt, 'Scan Barcode', impactGrey, context),
+                _buildGridButton(Icons.camera_alt, 'Scan Barcode', impactGrey, context, onPressed: () async {
+      final cameras = await availableCameras();
+      final firstCamera = cameras.first;
+      Navigator.push(
+        context, 
+        MaterialPageRoute(builder: (context) => BarcodeScanning( camera: firstCamera,)),
+      );
+    }),
                 _buildGridButton(Icons.star, 'Favorites', impactGrey, context),
                 _buildGridButton(Icons.search, 'Browse Products', impactGrey, context),
                 _buildGridButton(Icons.history, 'Scan History', impactGrey, context),
@@ -122,7 +131,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildGridButton(IconData icon, String label, Color bgColor, BuildContext context) {
+  Widget _buildGridButton(IconData icon, String label, Color bgColor, BuildContext context, {void Function()? onPressed}) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: bgColor,
@@ -131,9 +140,7 @@ class HomePage extends StatelessWidget {
         ),
         padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       ),
-      onPressed: () {
-        // Add button tap functionality here
-      },
+      onPressed: onPressed ,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,

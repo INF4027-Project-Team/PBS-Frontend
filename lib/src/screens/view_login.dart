@@ -37,7 +37,7 @@ class Login extends StatelessWidget {
                       height: 50, // Logo height
                     ),
                   ),
-                  SizedBox(height: 8), // Spacing between logo and text
+                  const SizedBox(height: 8), // Spacing between logo and text
                   Text(
                     'Welcome to Impact.com\'s\nProduct Barcode Scanner',
                     style: TextStyle(
@@ -46,27 +46,27 @@ class Login extends StatelessWidget {
                       color: impactBlack,
                     ),
                   ),
-                  SizedBox(height: 16), // Spacing before the text fields
+                  const SizedBox(height: 16), // Spacing before the text fields
                 ],
               ),
             ),
             // Email TextFormField
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'email',
                   border: OutlineInputBorder(),
                 ),
               ),
             ),
-            SizedBox(height: 8), // Spacing between text fields
+            const SizedBox(height: 8), // Spacing between text fields
             // Password TextFormField
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: TextFormField(
                 obscureText: true, // Hides password text
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'password',
                   border: OutlineInputBorder(),
                 ),
@@ -74,21 +74,21 @@ class Login extends StatelessWidget {
             ),
             // Login Button
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
               backgroundColor: impactPurple, // Updated to backgroundColor
-      minimumSize: Size(double.infinity, 50), // Set the button's size
+      minimumSize: const Size(double.infinity, 50), // Set the button's size
                 ),
                 onPressed: () {
                   // Implement login logic
                 },
-                child: Text('Login'),
+                child: const Text('Login'),
               ),
             ),
             // Forgot password and Privacy Text
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Align(
                 alignment: Alignment.center,
                 child: Column(
@@ -102,7 +102,7 @@ class Login extends StatelessWidget {
                         // Implement functionality for forgot password
                       },
                     ),
-                    SizedBox(height: 4), // Spacing between text
+                    const SizedBox(height: 4), // Spacing between text
                     InkWell(
                       child: Text(
                         'Privacy',

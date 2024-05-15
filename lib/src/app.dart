@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-
-import 'camera_overlay_painter.dart';
-import 'screen_display_product.dart'; // Import for rootBundle
+import 'package:pbs/src/screens/view_networks_offers.dart';
+import 'camera_overlay_animator.dart';
+import 'dart:convert';
+import 'objects/product.dart';
 
 
 class BarcodeScanning extends StatefulWidget {
@@ -56,13 +57,13 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
       appBar: AppBar(
         backgroundColor: impactGrey,
         leading: IconButton(
-        icon: Icon(Icons.menu, color: Colors.black),
+        icon: const Icon(Icons.menu, color: Colors.black),
         onPressed: (){},
       ),
 
       actions: [
           IconButton(
-            icon: Icon(Icons.home, color: Colors.black), // Add the home button icon
+            icon: const Icon(Icons.home, color: Colors.black), // Add the home button icon
             onPressed: () {
               // Add functionality for the home button here
             },
@@ -85,27 +86,9 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
             },
           ),
           
-          // Paint white borders around camera preview
-          CustomPaint(
-            size: MediaQuery.of(context).size,
-            painter: CameraOverlayPainter(),
-          ),
+          //Paint black borders and moving red line
+          CameraOverlay(),
           
-          /*
-          // Page heading
-           Positioned(
-            top: 50, // Adjust the top padding as needed
-            left: 16, // Adjust the left padding as needed
-            right: 16, // Adjust the right padding as needed
-            child: Text(
-              'Product Barcode Scanner',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: impactBlack,
-              ),
-            ),
-          ),*/
 
           //Impact Logo
           Positioned(
@@ -114,7 +97,7 @@ class BarcodeScannerScreenState extends State<BarcodeScanning> {
             right: 0, // Align the image to the right edge
             child: Center(
               child: Image.asset(
-                'assets/images/impact_logo.png', // Replace 'your_image.png' with your image asset path
+                'assets/images/impact_logo.webp', // Replace 'your_image.png' with your image asset path
                 width: 250, // Adjust width as needed
                 height: 250, // Adjust height as needed
               ),
@@ -239,7 +222,6 @@ Future<List<Barcode>> scanBarcodes(InputImage? inputImage) async {
     } 
     catch (e) 
     {
-      print('Error scanning barcodes: $e');
       return [];
     }
   }
@@ -247,22 +229,34 @@ Future<List<Barcode>> scanBarcodes(InputImage? inputImage) async {
 
   //Post to backend
   Future<void> postToBackend(String? stringToSend) async {
-    const url = 'http://192.168.1.149:8080/barcode'; //Change the 192.168.1.149 to the IP of server computer
+    const url = 'http://196.24.179.44:8080/barcode'; //Change the 192.168.1.149 to the IP of server computer
     final response = await http.post(
       Uri.parse(url),
       body: stringToSend,
     );
 
     if (response.statusCode == 200) {
-      print('String sent successfully');
-      String jsonResult = response.body;
-      print(jsonResult);
+      
+      //Recieve JSON containing two lists of offers
+      var jsonResponse = jsonDecode(response.body);
 
+      //Seperate offers by affiliate
+      var impactResults = jsonResponse['impact'];
+      var ebayResults = jsonResponse['ebay'];
+
+      List<dynamic> impactJsonList = jsonDecode(impactResults);
+      List<dynamic> ebayJsonList = jsonDecode(ebayResults);
+
+      //Create lists of product objects to be pushed to next screens
+      List<Product> impactProductList = impactJsonList.map((jsonItem) => Product.fromJson("impact", jsonItem)).toList();
+      List<Product> ebayProductList = ebayJsonList.map((jsonItem) => Product.fromJson("eBay", jsonItem)).toList();
+
+      
       //Barcode is displayed on the results screen
                       Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ResultsScreen(json: jsonResult),//(json: jsonResult),
+                        builder: (context) => NetworkResults(impactOffers: impactProductList, ebayOffers: ebayProductList),
                       ),
                     );
 
@@ -288,7 +282,7 @@ Future<List<Barcode>> scanBarcodes(InputImage? inputImage) async {
 
     //Calculate the rotation degree of camera
     final sensorOrientation = widget.camera.sensorOrientation;
-    var rotationCompensation = _orientations[_controller!.value.deviceOrientation];
+    var rotationCompensation = _orientations[_controller.value.deviceOrientation];
       
     if (rotationCompensation == null) return null;
 
