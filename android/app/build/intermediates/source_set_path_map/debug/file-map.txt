@@ -1,0 +1,14 @@
+com.example.demo_app-jetified-window-1.0.0-beta04-0 /Users/adriangroening/.gradle/caches/transforms-3/25cee5f028ac2a6b79fd6278ff5b59e2/transformed/jetified-window-1.0.0-beta04/res
+com.example.demo_app-jetified-annotation-experimental-1.1.0-1 /Users/adriangroening/.gradle/caches/transforms-3/6c0c163cc77ae6c91f9f7dfcd179c29c/transformed/jetified-annotation-experimental-1.1.0/res
+com.example.demo_app-core-1.6.0-2 /Users/adriangroening/.gradle/caches/transforms-3/7e9df2ac2213a6bd3cef0f2f27870d79/transformed/core-1.6.0/res
+com.example.demo_app-jetified-window-java-1.0.0-beta04-3 /Users/adriangroening/.gradle/caches/transforms-3/ae81e06d24c799147c26814497a2a305/transformed/jetified-window-java-1.0.0-beta04/res
+com.example.demo_app-packaged_res-4 /Users/adriangroening/.pub-cache/hosted/pub.dev/camera_android-0.9.8+3/android/build/intermediates/packaged_res/debug
+com.example.demo_app-packaged_res-5 /Users/adriangroening/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.19/android/build/intermediates/packaged_res/debug
+com.example.demo_app-pngs-6 /Users/adriangroening/Desktop/Iteration2/PBS-Frontend-Prototype2/android/app/build/generated/res/pngs/debug
+com.example.demo_app-resValues-7 /Users/adriangroening/Desktop/Iteration2/PBS-Frontend-Prototype2/android/app/build/generated/res/resValues/debug
+com.example.demo_app-rs-8 /Users/adriangroening/Desktop/Iteration2/PBS-Frontend-Prototype2/android/app/build/generated/res/rs/debug
+com.example.demo_app-mergeDebugResources-9 /Users/adriangroening/Desktop/Iteration2/PBS-Frontend-Prototype2/android/app/build/intermediates/incremental/debug/mergeDebugResources/merged.dir
+com.example.demo_app-mergeDebugResources-10 /Users/adriangroening/Desktop/Iteration2/PBS-Frontend-Prototype2/android/app/build/intermediates/incremental/debug/mergeDebugResources/stripped.dir
+com.example.demo_app-merged_res-11 /Users/adriangroening/Desktop/Iteration2/PBS-Frontend-Prototype2/android/app/build/intermediates/merged_res/debug
+com.example.demo_app-debug-12 /Users/adriangroening/Desktop/Iteration2/PBS-Frontend-Prototype2/android/app/src/debug/res
+com.example.demo_app-main-13 /Users/adriangroening/Desktop/Iteration2/PBS-Frontend-Prototype2/android/app/src/main/res
