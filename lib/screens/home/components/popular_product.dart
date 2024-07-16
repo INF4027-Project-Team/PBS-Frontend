@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../components/product_card.dart';
-import '../../../models/Product.dart';
-import '../../details/details_screen.dart';
+import '/objects/product.dart';
+import '../../product_details/product_details_screen.dart';
 import '../../products/products_screen.dart';
 import 'section_title.dart';
 
@@ -29,7 +29,7 @@ class PopularProducts extends StatelessWidget {
               ...List.generate(
                 demoProducts.length,
                 (index) {
-                  if (demoProducts[index].isPopular) {
+                  if (demoProducts[index].isFavourite) {
                     return Padding(
                       padding: const EdgeInsets.only(left: 20),
                       child: ProductCard(
@@ -37,8 +37,8 @@ class PopularProducts extends StatelessWidget {
                         onPress: () => Navigator.pushNamed(
                           context,
                           DetailsScreen.routeName,
-                          arguments: ProductDetailsArguments(
-                              product: demoProducts[index]),
+                          //arguments: ProductDetailsArguments(
+                            //  product: demoProducts[index]),
                         ),
                       ),
                     );

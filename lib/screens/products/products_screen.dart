@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/components/product_card.dart';
-import 'package:shop_app/models/Product.dart';
+import '/objects/product.dart';
 
-import '../details/details_screen.dart';
+import '../product_details/product_details_screen.dart';
 
 class ProductsScreen extends StatelessWidget {
   const ProductsScreen({super.key});
@@ -31,8 +31,8 @@ class ProductsScreen extends StatelessWidget {
               onPress: () => Navigator.pushNamed(
                 context,
                 DetailsScreen.routeName,
-                arguments:
-                    ProductDetailsArguments(product: demoProducts[index]),
+                //arguments:
+                  //  ProductDetailsArguments(product: demoProducts[index]),
               ),
             ),
           ),

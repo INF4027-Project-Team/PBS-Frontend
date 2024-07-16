@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:shop_app/screens/products/products_screen.dart';
-
+import 'package:shop_app/screens/Scan%20History/search_history.dart';
 import 'screens/cart/cart_screen.dart';
 import 'screens/complete_profile/complete_profile_screen.dart';
-import 'screens/details/details_screen.dart';
+//import 'screens/product_details/product_details_screen.dart';
 import 'screens/forgot_password/forgot_password_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/init_screen.dart';
@@ -16,6 +16,7 @@ import 'screens/splash/splash_screen.dart';
 
 // We use name route
 // All our routes will be available here
+
 final Map<String, WidgetBuilder> routes = {
   InitScreen.routeName: (context) => const InitScreen(),
   SplashScreen.routeName: (context) => const SplashScreen(),
@@ -27,7 +28,8 @@ final Map<String, WidgetBuilder> routes = {
   OtpScreen.routeName: (context) => const OtpScreen(),
   HomeScreen.routeName: (context) => const HomeScreen(),
   ProductsScreen.routeName: (context) => const ProductsScreen(),
-  DetailsScreen.routeName: (context) => const DetailsScreen(),
+  //DetailsScreen.routeName: (context) => const DetailsScreen(),
+  SearchHistoryScreen.routeName: (context) => SearchHistoryScreen(),
   CartScreen.routeName: (context) => const CartScreen(),
   ProfileScreen.routeName: (context) => const ProfileScreen(),
 };

@@ -10,16 +10,17 @@ class LoginSuccessScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: const SizedBox(),
-        title: const Text("Login Success"),
+        //title: const Text("Login Success"),
       ),
       body: Column(
         children: [
-          const SizedBox(height: 16),
+          //const SizedBox(height: 16),
           Image.asset(
             "assets/images/check.png",
-            height: MediaQuery.of(context).size.height * 0.4, //40%
+            height: 150, //40%
           ),
-          const SizedBox(height: 16),
+          const Spacer(),
+          const SizedBox(height: 25),
           const Text(
             "Login Success",
             style: TextStyle(

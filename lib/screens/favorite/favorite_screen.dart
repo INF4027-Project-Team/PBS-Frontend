@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/components/product_card.dart';
-import 'package:shop_app/models/Product.dart';
+import '/objects/product.dart';
 
-import '../details/details_screen.dart';
+import '../product_details/product_details_screen.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({super.key});
@@ -13,7 +13,7 @@ class FavoriteScreen extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            "Favorites",
+            "Favourites",
             style: Theme.of(context).textTheme.titleLarge,
           ),
           Expanded(
@@ -23,7 +23,7 @@ class FavoriteScreen extends StatelessWidget {
                 itemCount: demoProducts.length,
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 200,
-                  childAspectRatio: 0.7,
+                  childAspectRatio: 0.63, // Adjusted from 0.7 to 0.63
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 16,
                 ),
@@ -32,8 +32,8 @@ class FavoriteScreen extends StatelessWidget {
                   onPress: () => Navigator.pushNamed(
                     context,
                     DetailsScreen.routeName,
-                    arguments:
-                        ProductDetailsArguments(product: demoProducts[index]),
+                    //arguments:
+                      //  ProductDetailsArguments(product: demoProducts[index]),
                   ),
                 ),
               ),
