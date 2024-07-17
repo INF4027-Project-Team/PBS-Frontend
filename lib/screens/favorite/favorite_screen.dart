@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/components/product_card.dart';
 import '/objects/product.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import '../product_details/product_details_screen.dart';
 
@@ -43,4 +45,32 @@ class FavoriteScreen extends StatelessWidget {
       ),
     );
   }
+
+
+
+  Future<List<Product>> getFavouriteFromDatabase(String? stringToSend, String email, String productJson) async {
+    final url = Uri.parse('http://192.168.1.149:8080/favorites'); // Change to your server's IP address
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, String>{
+      'email': email,
+      'action': "get",
+      'productJson': productJson,
+    }),
+    );
+
+    List<Product> favourites = [];
+
+    if (response.statusCode == 200) {
+      List<dynamic> offers = jsonDecode(response.body);
+      favourites = offers.map((jsonItem) => Product.fromJson(jsonItem)).toList();
+    }
+
+    return favourites;
+  }
+
+
 }
