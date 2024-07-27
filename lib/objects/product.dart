@@ -80,18 +80,4 @@ List<Product> demoProducts = [
     network:"impact.com",
     isFavourite: true,
   ),
-
-  Product(
-    title: "Bots yes",
-    imagePath: "https://www.bigw.com.au/medias/sys_master/images/images/h08/h51/49514013425694.jpg",
-    price: 12.22,
-    description: "Let kids team up with a popular Star Wars: The Clone Wars character on playtime missions with this LEGO? brick-built Captain Rex Y-Wing Microfighter (75391) starship toy. A fun fantasy gift idea for creative boys  girls and any young fan aged 6 and up  this buildable vehicle toy playset features the first-ever LEGO Star Wars? construction model of Captain Rex?s Y-wing. Designed to be easy to build so the action starts fast  this miniature version of the iconic Star Wars starfighter has a minifigure cockpit and 2 stud shooters  and the included Captain Rex LEGO minifigure comes with 2 blasters. Add another dimension to your child?s creative experience with the LEGO Builder app  featuring instructions and digital zoom and rotate viewing tools to help them build with confidence. This small set is part of a fun collectible series of quick-build LEGO Star Wars Microfighters (sold separately)  which can be matched up for even more brick-built action-adventures.",
-    currency:"USD",
-    brand:"LEGO",
-    commission:3.50,
-    category:"Toys", 
-    network:"impact.com",
-    isFavourite: true,
-  ),
-
   ];
