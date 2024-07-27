@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../objects/product.dart'; 
+import '../../objects/Product.dart'; 
 import 'components/product_display_card.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -150,7 +150,7 @@ class _ProductListState extends State<ProductList> {
       sortedProducts = await postToBackend(widget.barcodeValue, "price");
     } else if (newValue == 'Commission') {
       sortedProducts = await postToBackend(widget.barcodeValue, "commission");
-      print(_currentProducts);
+
     } else if (newValue == 'Value') {
       sortedProducts = await postToBackend(widget.barcodeValue, "value");
     }

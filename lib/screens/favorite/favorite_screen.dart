@@ -1,76 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/components/product_card.dart';
-import '/objects/product.dart';
+import 'package:shop_app/database%20access/database_service.dart';
+import 'package:shop_app/objects/User.dart';
+import '../../objects/Product.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../product_details/product_details_screen.dart';
 
 class FavoriteScreen extends StatelessWidget {
-  const FavoriteScreen({super.key});
+  FavoriteScreen({Key? key}) : super(key: key);
+
+  // Initialize favLength with null initially
+  int? favLength;
+  //DatabaseService data = DatabaseService();
+  //Future<List<Product>> fav = data.getFavouriteFromDatabase("bots");
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          Text(
-            "Favourites",
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: GridView.builder(
-                itemCount: demoProducts.length,
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 0.63, // Adjusted from 0.7 to 0.63
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 16,
+    return FutureBuilder<List<Product>>(
+      future: getFavourites(),//getFavourites(), // Call getFavourites method here
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error loading data'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('No favorites found'));
+        } else {
+          // Data loaded successfully
+          List<Product> prodList = snapshot.data!;
+          favLength = prodList.length; // Update favLength with the length of the list
+
+          return SafeArea(
+            child: Column(
+              children: [
+                Text(
+                  "Favourites",
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-                itemBuilder: (context, index) => ProductCard(
-                  product: demoProducts[index],
-                  onPress: () => Navigator.pushNamed(
-                    context,
-                    DetailsScreen.routeName,
-                    //arguments:
-                      //  ProductDetailsArguments(product: demoProducts[index]),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: GridView.builder(
+                      itemCount: favLength,
+                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 200,
+                        childAspectRatio: 0.63,
+                        mainAxisSpacing: 20,
+                        crossAxisSpacing: 16,
+                      ),
+                      itemBuilder: (context, index) => ProductCard(
+                        product: prodList[index], // Use prodList instead of demoProducts
+                        onPress: () => Navigator.pushNamed(
+                          context,
+                          DetailsScreen.routeName,
+                          //arguments:
+                          //  ProductDetailsArguments(product: prodList[index]),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-          )
-        ],
-      ),
-    );
-  }
-
-
-
-  Future<List<Product>> getFavouriteFromDatabase(String? stringToSend, String email, String productJson) async {
-    final url = Uri.parse('http://192.168.1.149:8080/favorites'); // Change to your server's IP address
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
+          );
+        }
       },
-      body: jsonEncode(<String, String>{
-      'email': email,
-      'action': "get",
-      'productJson': productJson,
-    }),
     );
-
-    List<Product> favourites = [];
-
-    if (response.statusCode == 200) {
-      List<dynamic> offers = jsonDecode(response.body);
-      favourites = offers.map((jsonItem) => Product.fromJson(jsonItem)).toList();
-    }
-
-    return favourites;
   }
 
+  Future<List<Product>> getFavourites() async {
+    var session = userSession();
+    String? email = session.userEmail;
+    DatabaseService _databaseService = DatabaseService();
+    List<Product> favList = await _databaseService.getFavouriteFromDatabase(email);
+    return favList;
+  }
+
+ 
 
 }

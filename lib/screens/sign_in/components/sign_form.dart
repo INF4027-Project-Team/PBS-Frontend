@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/database%20access/database_service.dart';
+import 'package:shop_app/objects/User.dart';
 
 import '../../../components/custom_surfix_icon.dart';
 import '../../../components/form_error.dart';
@@ -119,8 +121,10 @@ class _SignFormState extends State<SignForm> {
               //const Text("Remember me"),
               const Spacer(),
               GestureDetector(
-                onTap: () => Navigator.pushNamed(
-                    context, ForgotPasswordScreen.routeName),
+                onTap: ()  {
+                
+                       Navigator.pushNamed(context, ForgotPasswordScreen.routeName);
+                },
                 child: const Text(
                   "Forgot Password",
                   style: TextStyle(decoration: TextDecoration.underline),
@@ -131,12 +135,25 @@ class _SignFormState extends State<SignForm> {
           FormError(errors: errors),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 // if all are valid then go to success screen
                 KeyboardUtil.hideKeyboard(context);
-                Navigator.pushNamed(context, LoginSuccessScreen.routeName);
+
+                DatabaseService dbs = DatabaseService();
+                bool outcome = await dbs.userSignIn(email, password);
+                if (outcome)
+                  {
+                    var session = userSession();
+                    session.setEmail(email);
+                    Navigator.pushNamed(context, LoginSuccessScreen.routeName);
+                  }
+                else
+                {
+                  
+                }
+                
               }
             },
             child: const Text("Continue"),

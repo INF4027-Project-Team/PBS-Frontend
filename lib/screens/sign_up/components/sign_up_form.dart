@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/database%20access/database_service.dart';
+import 'package:shop_app/screens/sign_up_success/sign_up_success_screen.dart';
 
 import '../../../components/custom_surfix_icon.dart';
 import '../../../components/form_error.dart';
 import '../../../constants.dart';
-import '../../complete_profile/complete_profile_screen.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
@@ -14,6 +15,8 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
+  String? name;
+  String? surname;
   String? email;
   String? password;
   String? conform_password;
@@ -42,6 +45,59 @@ class _SignUpFormState extends State<SignUpForm> {
       key: _formKey,
       child: Column(
         children: [
+          TextFormField(
+            keyboardType: TextInputType.name,
+            onSaved: (newValue) => name = newValue,
+            onChanged: (value) {
+              if (value.isNotEmpty) {
+                removeError(error: kNamelNullError);
+              } 
+              return;
+            },
+            validator: (value) {
+              if (value!.isEmpty) {
+                addError(error: kNamelNullError);
+                return "";
+              } 
+              
+              return null;
+            },
+            decoration: const InputDecoration(
+              labelText: "Name",
+              hintText: "Enter your first name",
+              // If  you are using latest version of flutter then lable text and hint text shown like this
+              // if you r using flutter less then 1.20.* then maybe this is not working properly
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/User.svg"),
+            ),
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            keyboardType: TextInputType.name,
+            onSaved: (newValue) => surname = newValue,
+            onChanged: (value) {
+              if (value.isNotEmpty) {
+                removeError(error: kNamelNullError);
+              } 
+              return;
+            },
+            validator: (value) {
+              if (value!.isEmpty) {
+                addError(error: kNamelNullError);
+                return "";
+              } 
+              return null;
+            },
+            decoration: const InputDecoration(
+              labelText: "Surname",
+              hintText: "Enter your surname",
+              // If  you are using latest version of flutter then lable text and hint text shown like this
+              // if you r using flutter less then 1.20.* then maybe this is not working properly
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/User.svg"),
+            ),
+          ),
+          const SizedBox(height: 20),
           TextFormField(
             keyboardType: TextInputType.emailAddress,
             onSaved: (newValue) => email = newValue,
@@ -137,11 +193,24 @@ class _SignUpFormState extends State<SignUpForm> {
           FormError(errors: errors),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
+
+                DatabaseService dbs = DatabaseService();
+                bool outcome = await dbs.userSignUp(email, password, name, surname);
+                if (outcome) 
+                {
+                    removeError(error: kSignUpError);
+                    Navigator.pushNamed(context, SignUpSuccessScreen.routeName);
+                }
+                else
+                {
+                    addError(error: kSignUpError);
+                }
+                  
                 // if all are valid then go to success screen
-                Navigator.pushNamed(context, CompleteProfileScreen.routeName);
+                
               }
             },
             child: const Text("Continue"),

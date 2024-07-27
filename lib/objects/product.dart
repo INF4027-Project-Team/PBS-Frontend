@@ -1,4 +1,5 @@
 class Product {
+  final String id;
   final String title;
   final String description;
   final double price;
@@ -11,6 +12,7 @@ class Product {
   bool isFavourite;
 
   Product({
+    required this.id,
     required this.title,
     required this.description,
     required this.imagePath,
@@ -25,6 +27,8 @@ class Product {
 
 factory Product.fromJson( Map<String, dynamic> json ) {
     return Product(
+      id: json['productID'],
+      //imagePath: 'https://assets.mydeal.com.au/48517/lego-75387-star-wars-boarding-the-tantive-iv-11607678_00.jpg?v=638562396326161647&imgclass=dealgooglefeedimage',
       title: json['name'],
       description: json['description'],
       price: double.parse(json['price']),
@@ -36,6 +40,22 @@ factory Product.fromJson( Map<String, dynamic> json ) {
       network: json['affiliate'],
       isFavourite: false,
     );
+  }
+
+
+   Map<String, dynamic> toJson() {
+    return {
+        'productID': id,
+       'name': title,
+       'description':description,
+       'price':price,
+     'currency': currency,
+     'imageURL': imagePath,
+      'category':category,
+      'brand':brand,
+      'commissionRate':commission,
+      'affiliate':network,
+    };
   }
   
   
@@ -56,6 +76,7 @@ factory Product.fromJson( Map<String, dynamic> json ) {
 
 List<Product> demoProducts = [
   Product(
+    id: 'sfsfsf',
     title: "LEGO Star Wars: Captain Rex Y-Wing Microfighter - (75391)",
     imagePath: "https://www.bigw.com.au/medias/sys_master/images/images/h08/h51/49514013425694.jpg",
     price: 64.99,
@@ -69,6 +90,7 @@ List<Product> demoProducts = [
   ),
 
   Product(
+    id: '21231',
     title: "LEGO Star Wars: Boading the tantic",
     imagePath: "https://assets.mydeal.com.au/48517/lego-75387-star-wars-boarding-the-tantive-iv-11607678_00.jpg?v\u003d638562396326161647\u0026imgclass\u003ddealgooglefeedimage",
     price: 149.99,

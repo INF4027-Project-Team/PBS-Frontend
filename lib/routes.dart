@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:shop_app/screens/products/products_screen.dart';
 import 'package:shop_app/screens/Scan%20History/search_history.dart';
+import 'package:shop_app/screens/sign_up_success/sign_up_success_screen.dart';
 import 'screens/cart/cart_screen.dart';
 import 'screens/complete_profile/complete_profile_screen.dart';
 //import 'screens/product_details/product_details_screen.dart';
@@ -28,7 +29,7 @@ final Map<String, WidgetBuilder> routes = {
   OtpScreen.routeName: (context) => const OtpScreen(),
   HomeScreen.routeName: (context) => const HomeScreen(),
   ProductsScreen.routeName: (context) => const ProductsScreen(),
-  //DetailsScreen.routeName: (context) => const DetailsScreen(),
+  SignUpSuccessScreen.routeName: (context) => const SignUpSuccessScreen(),
   SearchHistoryScreen.routeName: (context) => SearchHistoryScreen(),
   CartScreen.routeName: (context) => const CartScreen(),
   ProfileScreen.routeName: (context) => const ProfileScreen(),

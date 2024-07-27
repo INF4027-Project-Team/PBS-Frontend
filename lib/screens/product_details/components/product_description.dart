@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:shop_app/database%20access/database_service.dart';
+import 'package:shop_app/objects/User.dart';
+import '../../../screens/favorite/favorite_screen.dart';
 import '../../../constants.dart';
-import '../../../objects/product.dart';
+import '../../../objects/Product.dart';
 
 class ProductDescription extends StatefulWidget {
   const ProductDescription({
@@ -33,29 +35,46 @@ class _ProductDescriptionState extends State<ProductDescription> {
         ),*/
         Align(
           alignment: Alignment.centerRight,
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            width: 48,
-            decoration: BoxDecoration(
-              color: widget.product.isFavourite
-                  ? const Color(0xFFFFE6E6)
-                  : const Color(0xFFF5F6F9),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                bottomLeft: Radius.circular(20),
+          child: GestureDetector(
+            onTap: () {
+              // Toggle the favorite status here, you need to have setState or similar mechanism
+              setState(() {
+                if (!widget.product.isFavourite)
+                {
+                    widget.product.isFavourite= true;
+                    var session = userSession();
+                    String? email = session.userEmail;
+                    DatabaseService _databaseService = DatabaseService();
+                    _databaseService.addFavouriteToDatabase(email, widget.product);
+                }
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              width: 48,
+              decoration: BoxDecoration(
+                color: widget.product.isFavourite
+                    ? const Color(0xFFFFE6E6)
+                    : const Color(0xFFF5F6F9),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
+                ),
               ),
-            ),
-            child: SvgPicture.asset(
-              "assets/icons/Heart Icon_2.svg",
-              colorFilter: ColorFilter.mode(
+              child: SvgPicture.asset(
+                "assets/icons/Heart Icon_2.svg",
+                colorFilter: ColorFilter.mode(
                   widget.product.isFavourite
                       ? const Color(0xFFFF4848)
                       : const Color(0xFFDBDEE4),
-                  BlendMode.srcIn),
-              height: 16,
+                  BlendMode.srcIn,
+                ),
+                height: 16,
+              ),
             ),
           ),
         ),
+
         Padding(
           padding: const EdgeInsets.only(
             left: 20,

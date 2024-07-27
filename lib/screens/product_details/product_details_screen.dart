@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../objects/product.dart';
+import '../../objects/Product.dart';
 import 'components/product_description.dart';
 import 'components/product_images.dart';
 import 'components/top_rounded_container.dart';
@@ -83,7 +83,7 @@ class DetailsScreen extends StatelessWidget {
                       // Manufacturer label
                       _buildDetailRow("Brand: ${product.brand}"),
                       // Cheapest Price Label
-                      _buildDetailRow('Price (${product.currency}): ${product.price}'),
+                      _buildDetailRow('Price (${product.currency}): ${product.price.toStringAsFixed(2)}'),
                       // Highest Commission Label
                       _buildDetailRow('Commission On Sale (${product.currency}): ${(product.price * (product.commission / 100)).toStringAsFixed(2)} (${product.commission}%)'),
                     ],

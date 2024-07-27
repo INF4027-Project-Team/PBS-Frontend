@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import '../../screens/product_details/product_details_screen.dart';
 import '../constants.dart';
-import '../../objects/product.dart';
+import '../objects/Product.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({
@@ -22,7 +22,12 @@ class ProductCard extends StatelessWidget {
     return SizedBox(
       width: width,
       child: GestureDetector(
-        onTap: onPress,
+        onTap: (){
+          Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DetailsScreen(productDetails: product)), 
+        );
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -66,8 +71,8 @@ class ProductCard extends StatelessWidget {
                       ),
                       child: SvgPicture.asset(
                         "assets/icons/Heart Icon_2.svg",
-                        colorFilter: ColorFilter.mode(
-                            product.isFavourite
+                        colorFilter: const ColorFilter.mode(
+                            true
                                 ? Color.fromARGB(255, 255, 0, 0)
                                 : Color.fromARGB(255, 255, 255, 255),
                             BlendMode.srcIn),
@@ -84,7 +89,7 @@ class ProductCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    "Price: \$${product.price}",
+                    'Price (${product.currency}): ${product.price.toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontSize: 12, // Reduced font size
                       fontWeight: FontWeight.w600,

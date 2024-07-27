@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop_app/objects/User.dart';
 import 'package:shop_app/screens/offers/offers_screen.dart';
 import 'package:shop_app/screens/Scan%20History/search_history.dart';
 import 'components/camera_overlay_animator.dart';
 import 'dart:convert';
-import '/objects/product.dart';
+import '../../objects/Product.dart';
+import 'package:shop_app/database%20access/database_service.dart';
+import '/objects/history_item.dart'; 
 
 class HomeScreen extends StatefulWidget {
   static String routeName = "/home";
@@ -119,7 +122,7 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
       
      
       List<dynamic> offers = jsonDecode(response.body);
-      
+      print(offers);
 
       List<Product> offersList = offers.map((jsonItem) => Product.fromJson( jsonItem)).toList();
       if (offersList.isEmpty)
@@ -167,6 +170,21 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
 
       List<Product> specialOffers =[bestOffer,lowestPricedOffer,bestCommissionOffer];
 
+      //Add barcode to scan history
+      var session = userSession();
+      String? email = session.userEmail;
+      DatabaseService _databaseService = DatabaseService();
+
+      HistoryItem scanResult = HistoryItem
+      (
+        scanID:"",
+        creatorID: "", 
+        productBarcode: code,
+        dateOfScan:  "",
+        name:  bestOffer.title,
+        photo:  bestOffer.imagePath
+       );
+      _databaseService.addHistoryToDatabase(email, scanResult);
 
       // Barcode is displayed on the results screen
       if (Navigator.of(context).canPop()) {
@@ -277,21 +295,10 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
               }
             },
           ),
+          
           // Paint black borders and moving red line
           CameraOverlay(),
-          // Impact Logo
-          /*Positioned(
-            top: 0, 
-            left: 0, 
-            right: 0, 
-            child: Center(
-              child: Image.asset(
-                'assets/images/impact_logo.webp', 
-                width: 250, 
-                height: 250, 
-              ),
-            ),
-          ),*/
+        
           // Scan Button
           Positioned(
             bottom: MediaQuery.of(context).size.height /35, 

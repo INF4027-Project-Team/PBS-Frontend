@@ -5,6 +5,7 @@ import 'package:shop_app/screens/favorite/favorite_screen.dart';
 import 'package:shop_app/screens/home/home_screen.dart';
 import 'package:shop_app/screens/profile/profile_screen.dart';
 
+
 const Color inActiveIconColor = Color.fromARGB(255, 0, 0, 0);
 
 class InitScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _InitScreenState extends State<InitScreen> {
 
   final pages = [
     const HomeScreen(),
-    const FavoriteScreen(),
+    FavoriteScreen(),
     const Center(
       child: Text("Shhhhh"),
     ),
@@ -48,8 +49,8 @@ class _InitScreenState extends State<InitScreen> {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               "assets/icons/Camera Icon.svg",
-              height: 30,
-              width: 30,
+              height: 28,
+              width: 28,
               colorFilter: const ColorFilter.mode(
                 inActiveIconColor,
                 BlendMode.srcIn,
@@ -58,8 +59,8 @@ class _InitScreenState extends State<InitScreen> {
             ),
             activeIcon: SvgPicture.asset(
               "assets/icons/Camera Icon.svg",
-              height: 30,
-              width: 30,
+              height: 28,
+              width: 28,
               colorFilter: const ColorFilter.mode(
                 kPrimaryColor,
                 BlendMode.srcIn,
@@ -70,8 +71,8 @@ class _InitScreenState extends State<InitScreen> {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               "assets/icons/Heart Icon.svg",
-              height: 30,
-              width: 30,
+              height: 28,
+              width: 28,
               colorFilter: const ColorFilter.mode(
                 inActiveIconColor,
                 BlendMode.srcIn,
@@ -79,8 +80,8 @@ class _InitScreenState extends State<InitScreen> {
             ),
             activeIcon: SvgPicture.asset(
               "assets/icons/Heart Icon.svg",
-              height: 30,
-              width: 30,
+              height: 28,
+              width: 28,
               colorFilter: const ColorFilter.mode(
                 kPrimaryColor,
                 BlendMode.srcIn,
@@ -91,8 +92,8 @@ class _InitScreenState extends State<InitScreen> {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               "assets/icons/Chat bubble Icon.svg",
-               height: 30,
-              width: 30,
+               height: 28,
+              width: 28,
               colorFilter: const ColorFilter.mode(
                 inActiveIconColor,
                 BlendMode.srcIn,
@@ -100,8 +101,8 @@ class _InitScreenState extends State<InitScreen> {
             ),
             activeIcon: SvgPicture.asset(
               "assets/icons/Chat bubble Icon.svg",
-               height: 30,
-              width: 30,
+               height: 28,
+              width: 29,
               colorFilter: const ColorFilter.mode(
                 kPrimaryColor,
                 BlendMode.srcIn,
@@ -112,8 +113,8 @@ class _InitScreenState extends State<InitScreen> {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               "assets/icons/User Icon.svg",
-               height: 30,
-              width: 30,
+               height: 28,
+              width: 28,
               colorFilter: const ColorFilter.mode(
                 inActiveIconColor,
                 BlendMode.srcIn,
@@ -121,8 +122,8 @@ class _InitScreenState extends State<InitScreen> {
             ),
             activeIcon: SvgPicture.asset(
               "assets/icons/User Icon.svg",
-               height: 30,
-              width: 30,
+               height: 28,
+              width: 28,
               colorFilter: const ColorFilter.mode(
                 kPrimaryColor,
                 BlendMode.srcIn,
