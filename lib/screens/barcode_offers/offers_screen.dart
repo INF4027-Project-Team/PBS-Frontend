@@ -24,7 +24,7 @@ class ProductList extends StatefulWidget {
 class _ProductListState extends State<ProductList> {
   late List<Product> _currentProducts;
   late List<Product> _specialProducts;
-  String _selectedSort = 'Value'; // State variable for dropdown value
+  String _selectedSort = 'Relevance'; // State variable for dropdown value
 
   @override
   void initState() {
