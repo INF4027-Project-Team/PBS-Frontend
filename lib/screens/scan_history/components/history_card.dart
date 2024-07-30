@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '/objects/history_item.dart';
 import '../../../objects/Product.dart';
 import 'package:shop_app/database%20access/database_service.dart';
-import 'package:shop_app/screens/offers/offers_screen.dart';
+import 'package:shop_app/screens/barcode_offers/offers_screen.dart';
 
 class HistoryItemCard extends StatelessWidget {
   final HistoryItem item;
@@ -13,6 +13,22 @@ class HistoryItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
+          showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+              return const AlertDialog(
+                  content: Row(
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(width: 20),
+                    Text('Loading Results...'),
+                     ],
+                    ),
+                  );
+                },
+              );
+
         DatabaseService databaseService = DatabaseService();
         List<Product> offers = await databaseService.lookupBarcode(item.productBarcode);
         List<Product> specialOffers = databaseService.getSpecialOffers(offers);

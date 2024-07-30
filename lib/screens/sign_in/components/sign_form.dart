@@ -141,17 +141,36 @@ class _SignFormState extends State<SignForm> {
                 // if all are valid then go to success screen
                 KeyboardUtil.hideKeyboard(context);
 
+                showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            return const AlertDialog(
+                              content: Row(
+                                children: [
+                                  CircularProgressIndicator(),
+                                  SizedBox(width: 20),
+                                  Text('Signing in...'),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+
                 DatabaseService dbs = DatabaseService();
                 bool outcome = await dbs.userSignIn(email, password);
                 if (outcome)
                   {
                     var session = userSession();
                     session.setEmail(email);
+                    if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();}
                     Navigator.pushNamed(context, LoginSuccessScreen.routeName);
                   }
                 else
                 {
-                  
+                  if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();}
                 }
                 
               }

@@ -31,6 +31,28 @@ class DatabaseService {
   }
 
 
+  //Retrieve keyword search results
+  Future<List<Product>> lookupItem(String? stringToSend) async {
+    const url = 'http://192.168.1.149:8080/name'; 
+    final response = await http.post(
+      Uri.parse(url),
+      body: stringToSend,
+    );
+    
+    if (response.statusCode == 200) 
+    {
+      List<dynamic> offers = jsonDecode(response.body);
+      List<Product> offersList = offers.map((jsonItem) => Product.fromJson( jsonItem)).toList();
+ 
+      return offersList;      
+    } 
+    else
+    {
+      return [];
+    }
+  }
+
+
   //Get list of highlighted offers
   List<Product> getSpecialOffers(List<Product> offersList)
   {
@@ -62,6 +84,29 @@ class DatabaseService {
     
     return specialOffers;
   }
+
+
+
+  List<Product> placeSpecialOffersFirst(List<Product> offersList, List<Product> specialOffersList) {
+  // Create a set of special offers for quick lookup
+  Set<Product> specialOffersSet = Set.from(specialOffersList);
+  
+  // Create a list for special offers and another for the rest
+  List<Product> specialOffers = [];
+  List<Product> regularOffers = [];
+  
+  // Separate offersList into special offers and regular offers
+  for (var offer in offersList) {
+    if (specialOffersSet.contains(offer)) {
+      specialOffers.add(offer);
+    } else {
+      regularOffers.add(offer);
+    }
+  }
+  
+  // Combine the special offers and regular offers
+  return specialOffers + regularOffers;
+}
 
 
   //Retrieve user favourates

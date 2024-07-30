@@ -59,8 +59,8 @@ class _InitScreenState extends State<InitScreen> {
             ),
             activeIcon: SvgPicture.asset(
               "assets/icons/Camera Icon.svg",
-              height: 28,
-              width: 28,
+              height: 26,
+              width: 26,
               colorFilter: const ColorFilter.mode(
                 kPrimaryColor,
                 BlendMode.srcIn,
@@ -71,8 +71,8 @@ class _InitScreenState extends State<InitScreen> {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               "assets/icons/Heart Icon.svg",
-              height: 28,
-              width: 28,
+              height: 26,
+              width: 26,
               colorFilter: const ColorFilter.mode(
                 inActiveIconColor,
                 BlendMode.srcIn,
@@ -80,8 +80,8 @@ class _InitScreenState extends State<InitScreen> {
             ),
             activeIcon: SvgPicture.asset(
               "assets/icons/Heart Icon.svg",
-              height: 28,
-              width: 28,
+              height: 26,
+              width: 26,
               colorFilter: const ColorFilter.mode(
                 kPrimaryColor,
                 BlendMode.srcIn,
@@ -92,8 +92,8 @@ class _InitScreenState extends State<InitScreen> {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               "assets/icons/Chat bubble Icon.svg",
-               height: 28,
-              width: 28,
+               height: 26,
+              width: 26,
               colorFilter: const ColorFilter.mode(
                 inActiveIconColor,
                 BlendMode.srcIn,
@@ -101,8 +101,8 @@ class _InitScreenState extends State<InitScreen> {
             ),
             activeIcon: SvgPicture.asset(
               "assets/icons/Chat bubble Icon.svg",
-               height: 28,
-              width: 29,
+               height: 26,
+              width: 26,
               colorFilter: const ColorFilter.mode(
                 kPrimaryColor,
                 BlendMode.srcIn,
@@ -113,8 +113,8 @@ class _InitScreenState extends State<InitScreen> {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               "assets/icons/User Icon.svg",
-               height: 28,
-              width: 28,
+               height: 26,
+              width: 26,
               colorFilter: const ColorFilter.mode(
                 inActiveIconColor,
                 BlendMode.srcIn,
@@ -122,8 +122,8 @@ class _InitScreenState extends State<InitScreen> {
             ),
             activeIcon: SvgPicture.asset(
               "assets/icons/User Icon.svg",
-               height: 28,
-              width: 28,
+               height: 26,
+              width: 26,
               colorFilter: const ColorFilter.mode(
                 kPrimaryColor,
                 BlendMode.srcIn,

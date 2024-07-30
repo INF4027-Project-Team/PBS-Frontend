@@ -13,7 +13,7 @@ class ProductDescription extends StatefulWidget {
   }) : super(key: key);
 
   final Product product;
-
+  
   @override
   _ProductDescriptionState createState() => _ProductDescriptionState();
 }

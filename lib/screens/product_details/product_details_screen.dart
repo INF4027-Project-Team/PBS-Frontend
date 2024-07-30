@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/screens/scan_history/search_history.dart';
 import '../../objects/Product.dart';
 import 'components/product_description.dart';
 import 'components/product_images.dart';
@@ -21,18 +22,24 @@ class DetailsScreen extends StatelessWidget {
   final Color gloomyPurple = const Color(0xFF8A4EDD);
 
   final Product product; // Parameter to hold the word
-
+  bool isFav;
   //ResultsScreen({super.key});
   // Constructor to receive the word parameter
-   DetailsScreen({super.key, required Product productDetails})
-      : product = productDetails;
+   DetailsScreen({super.key, required Product productDetails, bool fav= false})
+      : product = productDetails, isFav = fav;
     
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6F9),
-      appBar: AppBar(
+     appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          'Product Details',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
@@ -54,9 +61,13 @@ class DetailsScreen extends StatelessWidget {
             ),
           ),
         ),
+        actions: [
+          IconButton(onPressed: ()=>{Navigator.pushNamed(context, SearchHistoryScreen.routeName)}, icon: Icon(Icons.history)),
+        ],
       ),
       body: ListView(
         children: [
+          const SizedBox(height: 20),
           ProductImages(product: product),
           TopRoundedContainer(
             
@@ -72,7 +83,7 @@ class DetailsScreen extends StatelessWidget {
                         setLogoPath(),
                         width: 130,
                       ),
-                      ProductDescription(product: product),
+                      ProductDescription(product: product,),
                     ],
                   ),
                 ),
@@ -140,6 +151,7 @@ class DetailsScreen extends StatelessWidget {
 
   String setLogoPath()
   {
+    product.isFavourite = isFav;
     String logoPath = 'assets/images/impact_logo.webp';
     if (product.network == "eBay")
     {

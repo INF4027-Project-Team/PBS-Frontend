@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/objects/User.dart';
 import '/objects/history_item.dart'; 
-import 'package:shop_app/screens/Scan%20History/components/history_card.dart';
+import 'package:shop_app/screens/scan_history/components/history_card.dart';
 import 'package:shop_app/database%20access/database_service.dart';
 //import '../product_details/product_details_screen.dart';
 
@@ -41,6 +41,25 @@ class _SearchHistoryScreenState extends State<SearchHistoryScreen> {
         style: Theme.of(context).textTheme.titleLarge,),
         backgroundColor: Colors.white,
         elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              shape: const CircleBorder(),
+              padding: EdgeInsets.zero,
+              elevation: 0,
+              backgroundColor: Colors.white,
+            ),
+            child: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.black,
+              size: 20,
+            ),
+          ),
+        ),
       ),
       body: Column(
         children: [

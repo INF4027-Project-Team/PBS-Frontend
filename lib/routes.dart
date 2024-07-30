@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:shop_app/screens/products/products_screen.dart';
-import 'package:shop_app/screens/Scan%20History/search_history.dart';
+import 'package:shop_app/screens/scan_history/search_history.dart';
 import 'package:shop_app/screens/sign_up_success/sign_up_success_screen.dart';
 import 'screens/cart/cart_screen.dart';
 import 'screens/complete_profile/complete_profile_screen.dart';

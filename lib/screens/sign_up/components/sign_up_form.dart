@@ -197,15 +197,34 @@ class _SignUpFormState extends State<SignUpForm> {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
 
+                showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            return const AlertDialog(
+                              content: Row(
+                                children: [
+                                  CircularProgressIndicator(),
+                                  SizedBox(width: 20),
+                                  Text('Signing up...'),
+                                ],
+                              ),
+                            );
+                          },
+                        );
                 DatabaseService dbs = DatabaseService();
                 bool outcome = await dbs.userSignUp(email, password, name, surname);
                 if (outcome) 
                 {
                     removeError(error: kSignUpError);
+                    if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();}
                     Navigator.pushNamed(context, SignUpSuccessScreen.routeName);
                 }
                 else
                 {
+                    if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();}
                     addError(error: kSignUpError);
                 }
                   

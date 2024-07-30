@@ -65,7 +65,7 @@ class ProductDisplayCard extends StatelessWidget {
                                 ),
                               )
                             
-                            : item.commission == specialOffers[2].commission // Check if product is best commission
+                            : item == specialOffers[2] // Check if product is best commission
                             ? Container(
                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
@@ -78,7 +78,7 @@ class ProductDisplayCard extends StatelessWidget {
                                 ),
                               )
 
-                            : item.price== specialOffers[1].price // Check if product is best price
+                            : item == specialOffers[1] // Check if product is best price
                             ? Container(
                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
@@ -107,7 +107,7 @@ class ProductDisplayCard extends StatelessWidget {
                       ),
                       SizedBox(height: 5), // Adjust spacing between texts if needed
                       Text(
-                        'Commission On Sale (${item.currency}): ${(item.price * (item.commission / 100)).toStringAsFixed(2)} (${item.commission}%)',
+                        'Commission On Sale (${item.currency}): ${item.commission}% (${(item.price * (item.commission / 100)).toStringAsFixed(2)})',
                       ),
                     ],
                   ),

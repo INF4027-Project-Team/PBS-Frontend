@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/screens/scan_history/search_history.dart';
 import '../../objects/Product.dart'; 
-import 'components/product_display_card.dart';
+import 'components/item_display_card.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class ProductList extends StatefulWidget {
+class ItemList extends StatefulWidget {
   final List<Product> products;
   final List<Product> specialOffers;
-  final String barcodeValue;
+  final String keyword;
 
-  const ProductList({
+  const ItemList({
     Key? key,
     required this.products,
     required this.specialOffers,
-    required this.barcodeValue,
+    required this.keyword,
   }) : super(key: key);
 
   @override
-  _ProductListState createState() => _ProductListState();
+  _ItemListState createState() => _ItemListState();
 }
 
-class _ProductListState extends State<ProductList> {
+class _ItemListState extends State<ItemList> {
   late List<Product> _currentProducts;
   late List<Product> _specialProducts;
   String _selectedSort = 'Value'; // State variable for dropdown value
@@ -36,6 +37,11 @@ class _ProductListState extends State<ProductList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          'Search Results',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
@@ -57,6 +63,9 @@ class _ProductListState extends State<ProductList> {
             ),
           ),
         ),
+        actions: [
+          IconButton(onPressed: ()=>{Navigator.pushNamed(context, SearchHistoryScreen.routeName)}, icon: Icon(Icons.history)),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -66,26 +75,7 @@ class _ProductListState extends State<ProductList> {
               padding: EdgeInsets.all(16.0),
               child: Center(
                 child: Text(
-                  'Scan Results',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-            ),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Image.network(
-                  _currentProducts.isNotEmpty ? _currentProducts[0].imagePath : '',
-                  height: 190,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Center(
-                child: Text(
-                  'Offers for \n${widget.products[0].title}',
+                  'Offers relating to \n${widget.keyword}',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
@@ -122,7 +112,7 @@ class _ProductListState extends State<ProductList> {
                       }
                     },
                     items: <String>[
-                      'Value',
+                      'Relevance',
                       'Price',
                       'Commission',
                     ].map<DropdownMenuItem<String>>((String value) {
@@ -136,7 +126,7 @@ class _ProductListState extends State<ProductList> {
                 ],
               ),
             ),
-            ..._currentProducts.map((p) => ProductDisplayCard(item: p, specialOffers: _specialProducts,)).toList(),
+            ..._currentProducts.map((p) => ItemDisplayCard(item: p, specialOffers: _specialProducts,)).toList(),
           ],
         ),
       ),
@@ -147,12 +137,12 @@ class _ProductListState extends State<ProductList> {
     List<Product> sortedProducts = [];
 
     if (newValue == 'Price') {
-      sortedProducts = await postToBackend(widget.barcodeValue, "price");
+      //sortedProducts = await postToBackend(widget.barcodeValue, "price");
     } else if (newValue == 'Commission') {
-      sortedProducts = await postToBackend(widget.barcodeValue, "commission");
+      //sortedProducts = await postToBackend(widget.barcodeValue, "commission");
 
-    } else if (newValue == 'Value') {
-      sortedProducts = await postToBackend(widget.barcodeValue, "value");
+    } else if (newValue == 'Relevance') {
+      //sortedProducts = await postToBackend(widget.barcodeValue, "value");
     }
 
     setState(() {

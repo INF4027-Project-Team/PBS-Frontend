@@ -7,7 +7,7 @@ class CameraOverlayPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final double screenWidth = size.width+5;
+    final double screenWidth = size.width;
     final double screenHeight = size.height;
 
     // Modify these values to match a typical barcode dimension
@@ -21,7 +21,7 @@ class CameraOverlayPainter extends CustomPainter {
       ..strokeWidth = 2;
 
     // Calculate the top and bottom padding for the central rectangle
-    final double topPadding = (screenHeight - rectHeight) / 2;
+    final double topPadding = (screenHeight - rectHeight) / 2.5;
     final double bottomPadding = topPadding + rectHeight;
 
     // Rectangles around the central rectangle
