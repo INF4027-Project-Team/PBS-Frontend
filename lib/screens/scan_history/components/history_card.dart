@@ -22,7 +22,7 @@ class HistoryItemCard extends StatelessWidget {
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(width: 20),
-                    Text('Loading Results...'),
+                    Text('Loading Results...', style: TextStyle(fontSize: 13),),
                      ],
                     ),
                   );
@@ -32,6 +32,8 @@ class HistoryItemCard extends StatelessWidget {
         DatabaseService databaseService = DatabaseService();
         List<Product> offers = await databaseService.lookupBarcode(item.productBarcode);
         List<Product> specialOffers = databaseService.getSpecialOffers(offers);
+        if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();}
         Navigator.push(
           context,
           MaterialPageRoute(

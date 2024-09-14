@@ -46,7 +46,7 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
   Future<void> _initializeCamera() async {
     final cameras = await availableCameras();
     final firstCamera = cameras.first;
-
+    
     _controller = CameraController(
       firstCamera,
       ResolutionPreset.veryHigh,
@@ -76,6 +76,9 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
       // So that the barcode scanning happens seamlessly as the barcode comes into frame, without need for a button click
       setState(() {
         _capturedImage = image;
+         InputImageFormat? format = InputImageFormatValue.fromRawValue(image.format.raw);
+         //print(format);
+         //print("here first");
       });
     });
   }
@@ -104,7 +107,7 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Scan Barcode',
+          'Scanning',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         backgroundColor: Colors.transparent,
@@ -253,7 +256,7 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
                           children: [
                             CircularProgressIndicator(),
                             SizedBox(width: 20),
-                            Text('Scanning...'),
+                            Text('Scanning...', style: TextStyle(fontSize: 13),),
                           ],
                         ),
                       );
@@ -263,7 +266,9 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
                         
                   try {
                     // Last captured frame is prepared for barcode scan
-                    Barcodes barcodeScanner = Barcodes();     
+                    print("About to scan\n");
+                    Barcodes barcodeScanner = Barcodes();   
+                    print("image prep next");  
                     final inputImage = barcodeScanner.prepareInputImage(_capturedImage, _controller);
                           
                     // Check if an image has been successfully passed in
@@ -271,30 +276,66 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
                     //Navigator.of(context).pop(); // Close the loading dialog
                       return;
                     }
-
+                    print("input image done, creating dbs");
                     //Open database service for barcode and image scanning      
                     DatabaseService dbs = DatabaseService();
-
+                    print("dbs done");
                     //Scan barcodes if barcode is selected
                     if (!labelCentered){
                       // Scan the barcode with a 15-second timeout
                       
                       //Scan barcode image
+                      print("Starting scan\n");
                       List<Barcode> barcodesList = await barcodeScanner.scanBarcodes(inputImage).timeout(const Duration(seconds: 15));//await scanBarcodes(inputImage).timeout(Duration(seconds: 15));
+                      print("scan finished\n");
                       
                       //Store barcode number
                       String? barcodeNumber = barcodesList.first.displayValue;
                       String nonNullBc = barcodeNumber ?? "0";
 
+                      print(barcodeNumber);
                       //Retrieve list of offers for this barcode
                       List<Product> offersList = await dbs.lookupBarcode(barcodeNumber);
 
+                      print("offers list:");
+                        print(offersList);
+
+                      if (offersList.length<1)
+                      {
+                        
+                        // Remove loading icons from screen
+                      if (Navigator.of(context).canPop()) {
+                            Navigator.of(context).pop();}
+      
+
+                        showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Scan Complete'),
+                            content: const Text('No results found for this barcode'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // Close the timeout dialog
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      }
+                      else
+                      {
+
+                      print("identify special offers\n");
                       //Identify special offers
                       List<Product> specialOffersList = dbs.getSpecialOffers(offersList);
-
+                       print("place at front of list\n");
                       //Place special offers at the front
                       List<Product> finalOffersList = dbs.placeSpecialOffersFirst(offersList, specialOffersList);
-
+                       print("create history\n");
                       //Create a history item
                       var session = userSession();
                       String? email = session.userEmail;
@@ -325,6 +366,7 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
                                     ),
                         ),
                       );
+                      }
                     } 
 
                     //Do image scanning of item button is selected

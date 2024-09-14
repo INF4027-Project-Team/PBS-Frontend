@@ -15,11 +15,10 @@ class Barcodes
 
   // This is the method to prepare the images for barcode scanning
   InputImage? prepareInputImage(CameraImage? image, CameraController controller) {
+    
     if (image == null) return null;
-
     // Save image format
     final InputImageFormat? format = InputImageFormatValue.fromRawValue(image.format.raw);
-
     // Check that image is in correct format
     if ((format == null) || (format != InputImageFormat.nv21)) return null;
 

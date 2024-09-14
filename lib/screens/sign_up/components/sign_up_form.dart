@@ -206,7 +206,7 @@ class _SignUpFormState extends State<SignUpForm> {
                                 children: [
                                   CircularProgressIndicator(),
                                   SizedBox(width: 20),
-                                  Text('Signing up...'),
+                                  Text('Signing up...', style: TextStyle(fontSize: 13),),
                                 ],
                               ),
                             );

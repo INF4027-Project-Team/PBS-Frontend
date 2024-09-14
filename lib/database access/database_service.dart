@@ -1,3 +1,5 @@
+import 'package:shop_app/screens/Dashboard/components/special_offers_card.dart';
+
 import '../objects/Product.dart';// Assuming you have a Product class defined
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -59,7 +61,7 @@ class DatabaseService {
 
     //Identify best offer
     Product bestOffer = offersList[0];
-
+    
     //Identify best price
     Product lowestPricedOffer = offersList[0];
     for (var offer in offersList) 
@@ -85,6 +87,53 @@ class DatabaseService {
     return specialOffers;
   }
 
+
+  //Get list of highlighted offers
+  List<Product> getDashboardOffers(List<Product> offersList)
+  {
+
+    //Identify best offer
+    Product bestPayoutOffer = offersList[0];
+    
+    //Identify best price
+    Product lowestPricedOffer = offersList[0];
+    Product bestCommissionOffer = offersList[0];
+    Product latestOffer = Product.copy(offersList[0]);;
+    for (var offer in offersList) 
+    {
+
+      //Identify the offer with the best selling price
+      if (offer.price < lowestPricedOffer.price) 
+      {
+        lowestPricedOffer = Product.copy(offer);
+      }
+
+      //Identify the offer with highest commission
+      if (offer.commission > bestCommissionOffer.commission) 
+      {
+        bestCommissionOffer = Product.copy(offer);
+      }
+
+      //Identify the best payout offer
+      if (
+            (offer.price * (offer.commission / 100))  >  (bestPayoutOffer.price * (offer.commission/100))
+          )
+      {
+        bestPayoutOffer = Product.copy(offer);
+      }
+
+    }
+
+    bestPayoutOffer.specialtyType = offerType.payout;
+    lowestPricedOffer.specialtyType = offerType.price;
+    bestCommissionOffer.specialtyType = offerType.rate;
+    latestOffer.specialtyType = offerType.stock;
+
+   
+    List<Product> dashboardOffers =[lowestPricedOffer,bestPayoutOffer,bestCommissionOffer, latestOffer];
+    
+    return dashboardOffers;
+  }
 
 
   List<Product> placeSpecialOffersFirst(List<Product> offersList, List<Product> specialOffersList) {

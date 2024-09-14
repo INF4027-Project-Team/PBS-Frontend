@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/screens/init_screen.dart';
 import 'package:shop_app/screens/scan_history/search_history.dart';
 import '../../objects/Product.dart';
 import 'components/product_description.dart';
 import 'components/product_images.dart';
 import 'components/top_rounded_container.dart';
 import 'package:shop_app/screens/cart/cart_screen.dart';
-
+import 'package:share_plus/share_plus.dart';
 class DetailsScreen extends StatelessWidget {
   
   static String routeName = "/details";
@@ -62,6 +63,8 @@ class DetailsScreen extends StatelessWidget {
           ),
         ),
         actions: [
+          IconButton(onPressed: ()=>{Navigator.pushNamed(context, InitScreen.routeName)}, icon: Icon(Icons.home)),
+          SizedBox(width: 10),
           IconButton(onPressed: ()=>{Navigator.pushNamed(context, SearchHistoryScreen.routeName)}, icon: Icon(Icons.history)),
         ],
       ),
@@ -113,7 +116,9 @@ class DetailsScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, CartScreen.routeName);
+                //Navigator.pushNamed(context, CartScreen.routeName);
+                final String content = 'Check out this awesome content!';
+                Share.share(content);
               },
               child: const Text("Share"),
             ),

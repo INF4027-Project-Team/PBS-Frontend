@@ -150,7 +150,7 @@ class _SignFormState extends State<SignForm> {
                                 children: [
                                   CircularProgressIndicator(),
                                   SizedBox(width: 20),
-                                  Text('Signing in...'),
+                                  Text('Signing in...', style: TextStyle(fontSize: 13),),
                                 ],
                               ),
                             );

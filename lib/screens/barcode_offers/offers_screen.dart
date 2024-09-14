@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/database%20access/database_service.dart';
+import 'package:shop_app/screens/Dashboard/dashboard_screen.dart';
+import 'package:shop_app/screens/init_screen.dart';
 import 'package:shop_app/screens/scan_history/search_history.dart';
 import '../../objects/Product.dart'; 
 import 'components/product_display_card.dart';
@@ -64,6 +67,8 @@ class _ProductListState extends State<ProductList> {
           ),
         ),
         actions: [
+          IconButton(onPressed: ()=>{Navigator.pushNamed(context, InitScreen.routeName)}, icon: Icon(Icons.home)),
+          SizedBox(width: 10),
           IconButton(onPressed: ()=>{Navigator.pushNamed(context, SearchHistoryScreen.routeName)}, icon: Icon(Icons.history)),
         ],
       ),
@@ -90,6 +95,33 @@ class _ProductListState extends State<ProductList> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
+            ),
+            
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child:Container(
+                width: 40,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Colors.blueGrey,
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                
+                child: ElevatedButton(
+                  onPressed: ()  {
+                    DatabaseService db = DatabaseService();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Dashboard(
+                                      products: _currentProducts,
+                                      specialOffers: db.getDashboardOffers(_currentProducts),
+                                    ),
+                        ),
+                      );},
+                  child: const Text("Dashboard"),
+                ),
+                    ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

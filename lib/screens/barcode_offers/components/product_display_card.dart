@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import '../../product_details/product_details_screen.dart';
 import '../../../objects/Product.dart'; 
@@ -42,16 +44,15 @@ class ProductDisplayCard extends StatelessWidget {
                     children: <Widget>[
                       // Network image
                       Expanded(
-                        child: Image.asset(
+                        child: 
                           setLogoPath(),
-                          height: 35,
-                          alignment: Alignment.centerLeft, 
-                        ),
                       ),
+
+                      
 
                       // Best Offer container
                       Container(
-                        width: 80, // Set a fixed width for the container
+                        width: 100, // Set a fixed width for the container
                         child: item == specialOffers[0]
                             ? Container(
                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -59,9 +60,20 @@ class ProductDisplayCard extends StatelessWidget {
                                   color: Colors.red,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                child: const Text(
-                                  'Best Offer',
-                                  style: TextStyle(fontSize: 12, color: Colors.white),
+                                child:  const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Best Offer',
+                                      style: TextStyle(fontSize: 12, color: Colors.white),
+                                    ),
+                                    SizedBox(width: 8), // Add some spacing between the text and the icon
+                                    Icon(
+                                      Icons.local_offer, // You can use Icons.star if you prefer
+                                      size: 14, // Adjust the size of the icon as needed
+                                      color: Colors.white,
+                                    ),
+                                  ],
                                 ),
                               )
                             
@@ -72,9 +84,20 @@ class ProductDisplayCard extends StatelessWidget {
                                   color: Colors.blue[400],
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                child: const Text(
-                                  'Best Commission',
-                                  style: TextStyle(fontSize: 9, color: Colors.white),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Best Commision',
+                                      style: TextStyle(fontSize: 12, color: Colors.white),
+                                    ),
+                                    SizedBox(width: 8), // Add some spacing between the text and the icon
+                                    Icon(
+                                      Icons.trending_up, // You can use Icons.star if you prefer
+                                      size: 14, // Adjust the size of the icon as needed
+                                      color: Colors.white,
+                                    ),
+                                  ],
                                 ),
                               )
 
@@ -85,9 +108,20 @@ class ProductDisplayCard extends StatelessWidget {
                                   color: Colors.green,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                child: const Text(
-                                  'Best Price',
-                                  style: TextStyle(fontSize: 12, color: Colors.white),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Best Price',
+                                      style: TextStyle(fontSize: 12, color: Colors.white),
+                                    ),
+                                    SizedBox(width: 8), // Add some spacing between the text and the icon
+                                    Icon(
+                                      Icons.attach_money, // You can use Icons.star if you prefer
+                                      size: 14, // Adjust the size of the icon as needed
+                                      color: Colors.white,
+                                    ),
+                                  ],
                                 ),
                               )
 
@@ -122,11 +156,16 @@ class ProductDisplayCard extends StatelessWidget {
 
 
   //Gets the image path for the given network
-  String setLogoPath() {
-    String logoPath = 'assets/images/impact_logo.webp';
+  Widget setLogoPath() {
+    Widget logoPath = Image.network(item.logoPath,
+                          height: 35,
+                          alignment: Alignment.centerLeft, );
     if (item.network == "eBay") {
-      logoPath = 'assets/images/ebay_logo.png';
+      logoPath = Image.asset('assets/images/ebay_logo.png',
+                          height: 35,
+                          alignment: Alignment.centerLeft, );
     }
+    
     return logoPath;
   }
 }
