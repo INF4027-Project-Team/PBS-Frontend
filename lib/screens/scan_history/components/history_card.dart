@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/screens/barcode_offers/Helpers/offerSorting.dart';
 import '/objects/history_item.dart';
 import '../../../objects/Product.dart';
 import 'package:shop_app/database%20access/database_service.dart';
@@ -31,7 +32,9 @@ class HistoryItemCard extends StatelessWidget {
 
         DatabaseService databaseService = DatabaseService();
         List<Product> offers = await databaseService.lookupBarcode(item.productBarcode);
-        List<Product> specialOffers = databaseService.getSpecialOffers(offers);
+
+        OfferSorting sorter = OfferSorting();
+        List<Product> specialOffers = sorter.getSpecialOffers(offers);
         if (Navigator.of(context).canPop()) {
                     Navigator.of(context).pop();}
         Navigator.push(

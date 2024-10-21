@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import 'package:shop_app/objects/User.dart';
+import 'package:shop_app/screens/barcode_offers/Helpers/offerSorting.dart';
 import 'package:shop_app/screens/home/components/barcodeScanner.dart';
 import 'package:shop_app/screens/home/components/imageLabeler.dart';
 import 'package:shop_app/screens/barcode_offers/offers_screen.dart';
@@ -17,6 +18,7 @@ import '/objects/history_item.dart';
 class HomeScreen extends StatefulWidget {
   static String routeName = "/home";
   const HomeScreen({Key? key}) : super(key: key);
+  
 
   @override
   BarcodeScannerScreenState createState() => BarcodeScannerScreenState();
@@ -26,6 +28,14 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
   late CameraController _controller;
   Future<void>? _initializeControllerFuture;
   CameraImage? _capturedImage;
+
+  //Open database service for barcode and image scanning      
+  DatabaseService dbs = DatabaseService();
+
+
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
+  String searchQuery = '';
 
   // Impact Colours
   Color impactGrey = const Color(0xFFC9C8CA);
@@ -76,9 +86,6 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
       // So that the barcode scanning happens seamlessly as the barcode comes into frame, without need for a button click
       setState(() {
         _capturedImage = image;
-         InputImageFormat? format = InputImageFormatValue.fromRawValue(image.format.raw);
-         //print(format);
-         //print("here first");
       });
     });
   }
@@ -98,6 +105,36 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
     });
   }
 
+
+  //Method to search Words
+  Future<void> _searchText(String word) async {
+   
+    //Remove spaces from results string
+    String itemTrimmed = word.trim();
+    String itemFinal = itemTrimmed.replaceAll(RegExp(r'\s+'), '%20');
+
+    //Retrieve offers
+    OfferSorting sorter = OfferSorting();
+
+    List<Product> itemList = await dbs.lookupItem(itemFinal);
+    List<Product> specialItemList = sorter.getSpecialOffers(itemList);
+    List<Product> finalItemList = sorter.placeSpecialOffersFirst(itemList, specialItemList);
+
+    //Move to item list screen      
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();}
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ItemList(
+            products: finalItemList,
+            keyword: word,
+            specialOffers: specialItemList,
+          ),
+        ),
+      );
+  }
+
   
   // Barcode scanning screen interface creation
   @override
@@ -106,14 +143,61 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
-          'Scanning',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        title: _isSearching
+          ? TextField(
+              controller: _searchController,
+              autofocus: true,
+              
+              decoration: const InputDecoration(
+                isDense: true,
+                hintText: 'Search...',
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,  
+                focusedBorder: InputBorder.none,
+              ),
+              onChanged: (value) {
+                setState(() {
+                  // Save the search query in the variable
+                  searchQuery = value;
+                    
+                });
+              },
+              onSubmitted: (value) {
+                setState(() {
+                  
+                  _isSearching = false;  // Close the search bar after submission
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      return const AlertDialog(
+                        content: Row(
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(width: 20),
+                            Text('Searching...', style: TextStyle(fontSize: 13),),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                  _searchText(searchQuery);
+                });
+              },
+            )
+          : const Text('Scanning'),
         backgroundColor: Colors.transparent,
         automaticallyImplyLeading: false,
         elevation: 0,
         actions: [
+          IconButton(
+          onPressed: () {
+            setState(() {
+              _isSearching = !_isSearching;  // Toggle search bar visibility
+            });
+          },
+          icon: Icon(_isSearching ? Icons.close : Icons.search),
+        ),
           IconButton(onPressed: ()=>{Navigator.pushNamed(context, SearchHistoryScreen.routeName)}, icon: const Icon(Icons.history)),
         ],
       ),
@@ -124,7 +208,11 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
             future: _initializeControllerFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                return CameraPreview(_controller);
+                return Container(
+              width: double.infinity, // Set your desired width
+              height: double.infinity, // Set your desired height
+              child: CameraPreview(_controller),
+            );
               } else {
                 return const Center(child: CircularProgressIndicator());
               }
@@ -166,10 +254,9 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
       ),
 
 
-
       // Selector buttons
       Positioned(
-        bottom: MediaQuery.of(context).size.height / 35,
+        bottom: MediaQuery.of(context).size.height / 25,
         left: 20,
         right: 20,
         child: Center(
@@ -266,9 +353,7 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
                         
                   try {
                     // Last captured frame is prepared for barcode scan
-                    print("About to scan\n");
                     Barcodes barcodeScanner = Barcodes();   
-                    print("image prep next");  
                     final inputImage = barcodeScanner.prepareInputImage(_capturedImage, _controller);
                           
                     // Check if an image has been successfully passed in
@@ -276,66 +361,58 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
                     //Navigator.of(context).pop(); // Close the loading dialog
                       return;
                     }
-                    print("input image done, creating dbs");
-                    //Open database service for barcode and image scanning      
-                    DatabaseService dbs = DatabaseService();
-                    print("dbs done");
+                    
                     //Scan barcodes if barcode is selected
                     if (!labelCentered){
                       // Scan the barcode with a 15-second timeout
                       
                       //Scan barcode image
-                      print("Starting scan\n");
                       List<Barcode> barcodesList = await barcodeScanner.scanBarcodes(inputImage).timeout(const Duration(seconds: 15));//await scanBarcodes(inputImage).timeout(Duration(seconds: 15));
-                      print("scan finished\n");
+                  
                       
                       //Store barcode number
                       String? barcodeNumber = barcodesList.first.displayValue;
                       String nonNullBc = barcodeNumber ?? "0";
 
-                      print(barcodeNumber);
                       //Retrieve list of offers for this barcode
                       List<Product> offersList = await dbs.lookupBarcode(barcodeNumber);
 
-                      print("offers list:");
-                        print(offersList);
 
                       if (offersList.length<1)
                       {
                         
                         // Remove loading icons from screen
                       if (Navigator.of(context).canPop()) {
-                            Navigator.of(context).pop();}
-      
+                          
+                          Navigator.of(context).pop();}
 
-                        showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Scan Complete'),
-                            content: const Text('No results found for this barcode'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(); // Close the timeout dialog
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                          showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Scan Complete'),
+                              content: const Text('No results found for this barcode'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(); // Close the timeout dialog
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       }
                       else
                       {
-
-                      print("identify special offers\n");
+                      
+                      OfferSorting sorter = OfferSorting();
                       //Identify special offers
-                      List<Product> specialOffersList = dbs.getSpecialOffers(offersList);
-                       print("place at front of list\n");
+                      List<Product> specialOffersList = sorter.getSpecialOffers(offersList);
                       //Place special offers at the front
-                      List<Product> finalOffersList = dbs.placeSpecialOffersFirst(offersList, specialOffersList);
-                       print("create history\n");
+                      List<Product> finalOffersList = sorter.placeSpecialOffersFirst(offersList, specialOffersList);
+                      
                       //Create a history item
                       var session = userSession();
                       String? email = session.userEmail;
@@ -380,28 +457,7 @@ class BarcodeScannerScreenState extends State<HomeScreen> {
                       //Store image scan results
                       String? item = labelList.first.label;
                       
-                      //Remove spaces from results string
-                      String itemTrimmed = item.trim();
-                      String itemFinal = itemTrimmed.replaceAll(RegExp(r'\s+'), '%20');
-
-                      //Retrieve offers
-                      List<Product> itemList = await dbs.lookupItem(itemFinal);
-                      List<Product> specialItemList = dbs.getSpecialOffers(itemList);
-                      List<Product> finalItemList = dbs.placeSpecialOffersFirst(itemList, specialItemList);
-
-                      //Move to item list screen      
-                      if (Navigator.of(context).canPop()) {
-                        Navigator.of(context).pop();}
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ItemList(
-                              products: finalItemList,
-                              keyword: item,
-                              specialOffers: specialItemList,
-                            ),
-                          ),
-                       );
+                      _searchText(item);
                       }
                     } catch (e) {
                       if (e is TimeoutException) {

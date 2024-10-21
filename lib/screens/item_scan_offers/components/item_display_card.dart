@@ -46,43 +46,7 @@ class ItemDisplayCard extends StatelessWidget {
                       // Best Offer container
                       Container(
                         width: 80,
-                        child: item == specialOffers[0]
-                            ? Container(
-                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: const Text(
-                                  'Best Offer',
-                                  style: TextStyle(fontSize: 12, color: Colors.white),
-                                ),
-                              )
-                            : item == specialOffers[2]
-                                ? Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue[400],
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: const Text(
-                                      'Best Commission',
-                                      style: TextStyle(fontSize: 9, color: Colors.white),
-                                    ),
-                                  )
-                                : item == specialOffers[1]
-                                    ? Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: Colors.green,
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                        child: const Text(
-                                          'Best Price',
-                                          style: TextStyle(fontSize: 12, color: Colors.white),
-                                        ),
-                                      )
-                                    : Container(),
+                        child: Container(),
                       ),
                     ],
                   ),

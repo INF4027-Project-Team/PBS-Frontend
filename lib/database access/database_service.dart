@@ -1,6 +1,5 @@
-import 'package:shop_app/screens/Dashboard/components/special_offers_card.dart';
-
-import '../objects/Product.dart';// Assuming you have a Product class defined
+import 'package:shop_app/objects/AnalyticObject.dart';
+import '../objects/Product.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '/objects/history_item.dart'; 
@@ -8,12 +7,16 @@ import 'dart:async';
 
 class DatabaseService {
   
-  final String baseUrl = 'http://192.168.1.149:8080'; // Replace with your server's IP address
+  // Adrian UCT http://196.24.155.150:8080
+  //Ahmed home http://192.168.1.149:8080
+  final String baseUrl = 'http://192.168.1.149:8080'; 
+  bool _isRequestInProgress = false;
+
 
 
   //Retrieve barcode results
   Future<List<Product>> lookupBarcode(String? stringToSend) async {
-    const url = 'http://192.168.1.149:8080/barcode'; 
+    final String url = '$baseUrl/barcode'; 
     final response = await http.post(
       Uri.parse(url),
       body: stringToSend,
@@ -35,7 +38,7 @@ class DatabaseService {
 
   //Retrieve keyword search results
   Future<List<Product>> lookupItem(String? stringToSend) async {
-    const url = 'http://192.168.1.149:8080/name'; 
+    final String url = '$baseUrl/name'; 
     final response = await http.post(
       Uri.parse(url),
       body: stringToSend,
@@ -54,108 +57,6 @@ class DatabaseService {
     }
   }
 
-
-  //Get list of highlighted offers
-  List<Product> getSpecialOffers(List<Product> offersList)
-  {
-
-    //Identify best offer
-    Product bestOffer = offersList[0];
-    
-    //Identify best price
-    Product lowestPricedOffer = offersList[0];
-    for (var offer in offersList) 
-    {
-      if (offer.price < lowestPricedOffer.price) 
-      {
-        lowestPricedOffer = offer;
-      }
-    }
-
-    //Identify best commission
-    Product bestCommissionOffer = offersList[0];
-    for (var offer in offersList) 
-    {
-      if (offer.commission > bestCommissionOffer.commission) 
-      {
-        bestCommissionOffer = offer;
-      }
-    }
-
-    List<Product> specialOffers =[bestOffer,lowestPricedOffer,bestCommissionOffer];
-    
-    return specialOffers;
-  }
-
-
-  //Get list of highlighted offers
-  List<Product> getDashboardOffers(List<Product> offersList)
-  {
-
-    //Identify best offer
-    Product bestPayoutOffer = offersList[0];
-    
-    //Identify best price
-    Product lowestPricedOffer = offersList[0];
-    Product bestCommissionOffer = offersList[0];
-    Product latestOffer = Product.copy(offersList[0]);;
-    for (var offer in offersList) 
-    {
-
-      //Identify the offer with the best selling price
-      if (offer.price < lowestPricedOffer.price) 
-      {
-        lowestPricedOffer = Product.copy(offer);
-      }
-
-      //Identify the offer with highest commission
-      if (offer.commission > bestCommissionOffer.commission) 
-      {
-        bestCommissionOffer = Product.copy(offer);
-      }
-
-      //Identify the best payout offer
-      if (
-            (offer.price * (offer.commission / 100))  >  (bestPayoutOffer.price * (offer.commission/100))
-          )
-      {
-        bestPayoutOffer = Product.copy(offer);
-      }
-
-    }
-
-    bestPayoutOffer.specialtyType = offerType.payout;
-    lowestPricedOffer.specialtyType = offerType.price;
-    bestCommissionOffer.specialtyType = offerType.rate;
-    latestOffer.specialtyType = offerType.stock;
-
-   
-    List<Product> dashboardOffers =[lowestPricedOffer,bestPayoutOffer,bestCommissionOffer, latestOffer];
-    
-    return dashboardOffers;
-  }
-
-
-  List<Product> placeSpecialOffersFirst(List<Product> offersList, List<Product> specialOffersList) {
-  // Create a set of special offers for quick lookup
-  Set<Product> specialOffersSet = Set.from(specialOffersList);
-  
-  // Create a list for special offers and another for the rest
-  List<Product> specialOffers = [];
-  List<Product> regularOffers = [];
-  
-  // Separate offersList into special offers and regular offers
-  for (var offer in offersList) {
-    if (specialOffersSet.contains(offer)) {
-      specialOffers.add(offer);
-    } else {
-      regularOffers.add(offer);
-    }
-  }
-  
-  // Combine the special offers and regular offers
-  return specialOffers + regularOffers;
-}
 
 
   //Retrieve user favourates
@@ -190,6 +91,62 @@ class DatabaseService {
     
   }
 
+
+
+  //Recieve instagram AI caption
+  Future<String> getAICaption(Product product, String suffix) async {
+    String productJson = jsonEncode(product.toJson());
+    final String url = '$baseUrl$suffix';
+
+    var urlu = Uri.parse(url);
+    final Map<String, String> headers = {"Content-Type": "application/json"};
+
+    final response = await http.post(
+      urlu,
+      headers: headers,
+      body: productJson,
+      
+    );
+    print(response.body);
+    if (response.statusCode == 200) 
+    {
+      return response.body;
+    } 
+    else 
+    {
+      return "Here is a nice product";
+    }
+  }
+
+
+
+  //Recieve caption for recommended product
+  Future<String> getRecommendedCaption(Product product) async {
+    String productJson = jsonEncode(product.toJson());
+    final String url = '$baseUrl/generateCaptionForProductComparison';
+
+    var urlu = Uri.parse(url);
+    final Map<String, String> headers = {"Content-Type": "application/json"};
+
+    final response = await http.post(
+      urlu,
+      headers: headers,
+      body: productJson,
+      
+    );
+
+    if (response.statusCode == 200) 
+    {
+      return response.body;
+    } 
+    else 
+    {
+      return "Here is a nice product";
+    }
+  }
+
+  
+
   //Add new item to favourates
   Future<void> addFavouriteToDatabase(String? email, Product product) async {
     String productJson = jsonEncode(product.toJson());
@@ -213,6 +170,60 @@ class DatabaseService {
     else 
     {
       print('Failed to add favorite: ${response.statusCode}');
+    }
+  }
+
+
+
+  //Add impact API
+  Future<void> addImpactKeys(String? email, String? username, String? password, String? key) async {
+   
+    final String url = '$baseUrl/updateAPIKeys';
+
+    var urlu = Uri.parse('$url?email=$email&impactUsername=$username&impactPassword=$password&ebayKey=$key');
+    final Map<String, String> headers = {"Content-Type": "application/json"};
+
+    final response = await http.post(
+      urlu,
+      headers: headers,
+      body: " ",
+      
+    );
+
+    if (response.statusCode == 200) 
+    {
+      print('Keys added successfully');
+    } 
+    else 
+    {
+      print('Keys Not Added: ${response.statusCode}');
+    }
+  }
+
+
+
+  //Add eBay keys
+  Future<void> addEbayKeys(String? email, String? key) async {
+   
+    final String url = '$baseUrl/updateAPIKeys';
+
+    var urlu = Uri.parse('$url?email=$email&ebayKey=$key');
+    final Map<String, String> headers = {"Content-Type": "application/json"};
+
+    final response = await http.post(
+      urlu,
+      headers: headers,
+      body: " ",
+      
+    );
+
+    if (response.statusCode == 200) 
+    {
+      print('Keys added successfully');
+    } 
+    else 
+    {
+      print('Keys Not Added: ${response.statusCode}');
     }
   }
 
@@ -248,6 +259,8 @@ class DatabaseService {
   }
 
 
+
+  //Add a barcode scan record to the database
   Future<void> addHistoryToDatabase(String? email, HistoryItem item) async {
     String barcode = item.productBarcode;
     String name = item.name;
@@ -273,6 +286,7 @@ class DatabaseService {
       print('Failed to add history: ${response.statusCode}');
     }
   }
+
 
 
     //Create User Account
@@ -324,8 +338,6 @@ class DatabaseService {
 
     String answer = response.body;
 
-    print(answer);
-
     if (response.statusCode == 200) 
     {
       if (answer== "Success")
@@ -341,6 +353,123 @@ class DatabaseService {
     {
       return false;
     }
+  }
+
+
+
+  //User Scan count
+  Future<String> userScanCount(String? email) async 
+  {
+    while (_isRequestInProgress) {
+      await Future.delayed(const Duration(milliseconds: 100)); // Wait for a bit
+    }
+    
+    _isRequestInProgress = true;
+
+    final String url = '$baseUrl/creatorscancount';
+    var urlu = Uri.parse('$url?email=$email');
+    final Map<String, String> headers = {"Content-Type": "application/json"};
+ 
+    final response = await http.post(
+      urlu,
+      headers: headers,
+      body: " ",
+    );
+
+    _isRequestInProgress = false;
+    return response.body;
+  }
+
+
+  //User share count
+  Future<String> userShareCount(String? email) async 
+  {
+    while (_isRequestInProgress) {
+      await Future.delayed(const Duration(milliseconds: 100)); // Wait for a bit
+    }
+    _isRequestInProgress = true;
+
+    final String url = '$baseUrl/creatorsharecount';
+    var urlu = Uri.parse('$url?email=$email');
+    final Map<String, String> headers = {"Content-Type": "application/json"};
+ 
+    final response = await http.post(
+      urlu,
+      headers: headers,
+      body: " ",
+    );
+
+    _isRequestInProgress = false;
+    return response.body;
+  }
+
+
+
+  //Product favourite count
+  Future<String> productFavouriteCount(String? productID) async 
+  {
+
+    final String url = '$baseUrl/productfavoritecount';
+    var urlu = Uri.parse('$url?productID=$productID');
+    final Map<String, String> headers = {"Content-Type": "application/json"};
+ 
+    final response = await http.post(
+      urlu,
+      headers: headers,
+      body: " ",
+    );
+
+    String answer = response.body;
+    
+    return answer;
+  }
+
+
+
+  //Product Share count
+  Future<String> productShareCount(String? productID) async 
+  {
+    final String url = '$baseUrl/productsharecount';
+    var urlu = Uri.parse('$url?productID=$productID');
+    final Map<String, String> headers = {"Content-Type": "application/json"};
+ 
+    final response = await http.post(
+      urlu,
+      headers: headers,
+      body: " ",
+    );
+
+    String answer = response.body;
+    return answer;
+  }
+
+
+
+  //Fetch analytics data from backend
+  Future<AnalyticObject> analytics(String? email) async 
+  {
+
+    final String url = '$baseUrl/analytics';
+    var urlu = Uri.parse('$url?email=$email');
+    final Map<String, String> headers = {"Content-Type": "application/json"};
+ 
+    final response = await http.post(
+      urlu,
+      headers: headers,
+      body: " ",
+    );
+
+      String reply = response.body.replaceAll('"null"', '"Ape"').replaceAll('null', '"Ape"');
+      Map<String, dynamic> analyticsData = jsonDecode(reply);
+      AnalyticObject results = AnalyticObject.fromJson(analyticsData);
+      if (results.sharedBrands!.length < 5) {
+    results.sharedBrands?.add('Product'); 
+  }
+
+  if (results.sharedCategories!.length < 5) {
+    results.sharedCategories?.add('Product'); 
+  }
+      return results;
   }
 
 

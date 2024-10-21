@@ -6,10 +6,9 @@ import '../../product_details/product_details_screen.dart';
 import '../../../objects/Product.dart'; 
 
 class NetworkAverageCard extends StatelessWidget {
-  final double impactAvg;
-  final double ebayAvg;
-  final String heading;
-  const NetworkAverageCard({super.key, required this.impactAvg, required this.ebayAvg, required this.heading});
+  final List<double> data;
+  final List<String> xLabels;
+  const NetworkAverageCard({super.key, required this.data, required this.xLabels });
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +18,7 @@ class NetworkAverageCard extends StatelessWidget {
       },
         
         child: SizedBox(
-          height: 180, 
-          width: 95,
+          height: 190, 
           child: Card(
             margin: EdgeInsets.all(8),
             color: Color(0xFFF5F6F9),
@@ -34,16 +32,17 @@ class NetworkAverageCard extends StatelessWidget {
       children: <Widget>[
         // Top row displaying title text
         Container(
+                     
                       padding: EdgeInsets.all(1), // Space around the text inside the box
                       decoration: BoxDecoration(
-                      color: Colors.greenAccent, // Background color of the box
+                      color: Color(0xFFff9585), // Background color of the box
                       borderRadius: BorderRadius.circular(8), // Rounded corners of the box
                       ),
                     alignment: Alignment.center,
                     child:
-               Text(
-                heading,
-                style: const TextStyle(
+               const Text(
+                "Offers Price Distribution",
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -55,15 +54,14 @@ class NetworkAverageCard extends StatelessWidget {
         SizedBox(height:3),
         
         // Logo image
-        setLogoPath(), 
+        //setLogoPath(), 
         SizedBox(height: 5), // Space between top row and content
         
         // Container to take up the rest of the card space
         Expanded(
           child: Container(
                 height: 115,
-                width: 95,
-                child: (heading == "Ttl Offers") ? CustomPieChart(value1: impactAvg, value2: ebayAvg): CustomBarChart(value1: impactAvg, value2: ebayAvg),
+                child: CustomBarChart(data: data, xLabels: xLabels,),
             ),
           ),
       ],
@@ -74,18 +72,7 @@ class NetworkAverageCard extends StatelessWidget {
     );
   }
 
- Widget setLogoPath() {
-    Widget logoPath = Image.asset('assets/images/impact_logo.webp',
-                          height: 25,
-                          alignment: Alignment.centerLeft, );
-    if (ebayAvg > impactAvg ) {
-      logoPath = Image.asset('assets/images/ebay_logo.png',
-                          height: 25,
-                          alignment: Alignment.centerLeft, );
-    }
-    
-    return logoPath;
-  }
+ 
   //Find average
 
   //Make graph

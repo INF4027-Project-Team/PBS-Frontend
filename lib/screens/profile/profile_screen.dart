@@ -20,7 +20,7 @@ class ProfileScreen extends StatelessWidget {
             //const ProfilePic(),
             const SizedBox(height: 20),
             ProfileMenu(
-              text: "My Account",
+              text: "My Profile",
               icon: "assets/icons/User Icon.svg",
               press: () => {},
             ),
@@ -30,7 +30,7 @@ class ProfileScreen extends StatelessWidget {
               press: () {},
             ),
             ProfileMenu(
-              text: "Settings",
+              text: "Manage Account Keys",
               icon: "assets/icons/Settings.svg",
               press: () {},
             ),

@@ -6,8 +6,8 @@ import '../../../objects/Product.dart';
 
 class FeaturedOfferCard extends StatelessWidget {
   final Product item;
-
-  const FeaturedOfferCard({super.key, required this.item, });
+  final String? caption;
+  const FeaturedOfferCard({super.key, required this.item, required this.caption});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class FeaturedOfferCard extends StatelessWidget {
       },
         
       child: SizedBox(
-        height: 230,
+        height: 225,
 
         child: Card(
           margin: const EdgeInsets.all(8),
@@ -41,6 +41,7 @@ class FeaturedOfferCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+
                 // Top row displaying "Recommended Offer" and network image
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,29 +49,52 @@ class FeaturedOfferCard extends StatelessWidget {
                       // "Recommended Offer" Text
                          Expanded(
                           child: Container(
-                            padding: EdgeInsets.all(1), // Space around the text inside the box
+                            padding: EdgeInsets.all(3), // Space around the text inside the box
                             decoration: BoxDecoration(
-                            color: Color(0xFFF4333C), // Background color of the box
-                            borderRadius: BorderRadius.circular(8), // Rounded corners of the box
+                              color: Color(0xFFF4333C), // Background color of the box
+                              borderRadius: BorderRadius.circular(8), // Rounded corners of the box
                             ),
-                          alignment: Alignment.center,
+                            alignment: Alignment.center,
 
-                          child: const Text(
-                            'Recommended Offer',
-                            style: TextStyle(
-                            fontSize: 21,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                            child: const Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                
+                                //Heading text
+                                Text(
+                                      'Recommended Offer',
+                                      style: TextStyle(
+                                      fontSize: 19,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+
+                                //Space before text
+                                SizedBox(width: 4),
+
+                                //Star symbol next to offer
+                                Icon(
+                                  Icons.local_fire_department,  // Choose the icon you want
+                                  color: Colors.white,  // Set icon color
+                                  size: 23.5,  // Set icon size
+                                    ),
+                                
+                                
+
+                                
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 5),
-                        // Network image (logo)
+                        
+                        const SizedBox(width: 5),
+                        
+                        // Logo image
                         setLogoPath(),
                       ],
                     ),
-                
+                        
                   const SizedBox(height: 7), // Space between top row and text
 
                   // Row for Price and Stock
@@ -82,53 +106,44 @@ class FeaturedOfferCard extends StatelessWidget {
 
                       child: Container(
                         padding: EdgeInsets.all(5), // Space around the text inside the box
-                        decoration: BoxDecoration(
-                          color: Colors.lightGreenAccent, // Background color of the box
-                          border: Border.all(
-                            color: Colors.green, // Border color of the box
-                            width: 1, // Border width
-                          ),
+                        decoration:  BoxDecoration(
+                          color: const Color(0xFFDDDEE1),
                           borderRadius: BorderRadius.circular(8), // Rounded corners of the box
                         ),
                         alignment: Alignment.center,
                         
                         child: Text(
-                            '\$${item.price.toStringAsFixed(2)}',
+                            'Price: \$${item.price.toStringAsFixed(2)}',
                               style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
+                              color: Colors.black,
                             ),
                           ),
                         ),
                       ),
 
                       const SizedBox(width: 25), //Space between Headings in row
-
-                      // In stock Heading
+                      
                       Expanded(
-
-                        child: Container(
+                      child: Container(
                         padding: EdgeInsets.all(5), // Space around the text inside the box
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 250, 234, 87), // Background color of the box
-                          border: Border.all(
-                            color: Colors.yellow, // Border color of the box
-                            width: 1, // Border width
-                          ),
-                          borderRadius: BorderRadius.circular(8), // Rounded corners of the box
-                        ),
-                        alignment: Alignment.center,
-                        
-                        child: Text(
-                          /*'${item.stock}*/ '5 in Stock', 
-                          style: const TextStyle(
+                        color: const Color(0xFFDDDEE1),
+                        borderRadius: BorderRadius.circular(8), // Rounded corners of the box
+                      ),
+                      alignment: Alignment.center,
+                        child:Text(
+                        'Payout: \$${(item.price * (item.commission / 100)).toStringAsFixed(2)}',
+                        style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          ),
-                          textAlign: TextAlign.right,
+                          color: Colors.black,
                         ),
                       ),
                     ),
+                    ),
+                      
                   ],
                 ),
 
@@ -138,28 +153,30 @@ class FeaturedOfferCard extends StatelessWidget {
                 Row(
                   children: <Widget>[
                     // Commission Heading
-                    Expanded(
-                      child: Container(
+                    
+                    // Last Updated
+                      Expanded(
+
+                        child: Container(
                         padding: EdgeInsets.all(5), // Space around the text inside the box
                         decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 246, 172, 61), // Background color of the box
-                        border: Border.all(
-                          color: Colors.orange, // Border color of the box
-                          width: 1, // Border width
+                          color: const Color(0xFFDDDEE1),
+                          borderRadius: BorderRadius.circular(8), // Rounded corners of the box
                         ),
-                        borderRadius: BorderRadius.circular(8), // Rounded corners of the box
-                      ),
-                      alignment: Alignment.center,
-                        child:Text(
-                        '\$${(item.price * (item.commission / 100)).toStringAsFixed(2)} Payout',
-                        style: const TextStyle(
-                          fontSize: 15,
+                        alignment: Alignment.center,
+                        
+                        child: Text(
+                          'Rate: ${item.commission}%', 
+                          style: const TextStyle(
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                          ),
+                          textAlign: TextAlign.right,
+                          
                         ),
                       ),
                     ),
-                    ),
-
                     const SizedBox(width: 25),
 
                     // Payout Heading
@@ -167,19 +184,16 @@ class FeaturedOfferCard extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.all(5), // Space around the text inside the box
                         decoration: BoxDecoration(
-                        color: Colors.lightBlueAccent, // Background color of the box
-                        border: Border.all(
-                          color: Colors.blue, // Border color of the box
-                          width: 1, // Border width
+                          color: const Color(0xFFDDDEE1),
+                            borderRadius: BorderRadius.circular(8), // Rounded corners of the box
                           ),
-                          borderRadius: BorderRadius.circular(8), // Rounded corners of the box
-                        ),
                         alignment: Alignment.center,
                         child:Text(
-                        '${item.commission}% Rate', 
+                        item.dateFormatter(), 
                         style: const TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.w600
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -196,15 +210,12 @@ class FeaturedOfferCard extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.all(2), // Space around the text inside the box
                         decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
                         color: Colors.grey[200], // Background color of the box
-                        border: Border.all(
-                          color: Colors.grey.shade300, // Border color of the box
-                          width: 1, // Border width
-                          ),
                           borderRadius: BorderRadius.circular(4), // Rounded corners of the box
                         ),
                         alignment: Alignment.center,
-                      child: Text(
+                      child: const Text(
                         'This offer is recomended due to its good price and high stock availability', // Replace with dynamic text if needed
                         style: TextStyle(
                           fontSize: 13,
@@ -229,11 +240,11 @@ class FeaturedOfferCard extends StatelessWidget {
   //Gets the image path for the given network
   Widget setLogoPath() {
     Widget logoPath = Image.asset('assets/images/impact_logo.webp',
-                          height: 27,
+                          height: 25,
                           alignment: Alignment.centerLeft, );
     if (item.network == "eBay") {
       logoPath = Image.asset('assets/images/ebay_logo.png',
-                          height: 27,
+                          height: 25,
                           alignment: Alignment.centerLeft, );
     }
     

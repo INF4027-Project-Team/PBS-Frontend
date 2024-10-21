@@ -11,19 +11,21 @@ class CustomPieChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return PieChart(
       PieChartData(
-        centerSpaceColor: const Color(0xFF040404),
+        //centerSpaceColor: const Color(0xFF040404),
         sectionsSpace: 0,  // Remove space between sections
-        centerSpaceRadius: 10,  // Reduce center space
+        centerSpaceRadius: 35,  // Reduce center space
         pieTouchData: PieTouchData(enabled: true),
         sections: [
           PieChartSectionData(
+            radius: 5,
             value: value1,
-            color: Colors.red,
+            color: const Color(0xFFff9585),
             title: 'impact.com',  // Display percentage
           ),
           PieChartSectionData(
+            radius: 5,
             value: value2,
-            color: const Color(0xFFC9C8CA),
+            color: Color(0xFFC0C0C0),
             title: 'eBay',
           ),
         ],

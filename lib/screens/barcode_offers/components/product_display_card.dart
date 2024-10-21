@@ -48,7 +48,29 @@ class ProductDisplayCard extends StatelessWidget {
                           setLogoPath(),
                       ),
 
-                      
+                      Container(
+                        width: 50,  // Set the width to 70
+                        padding: EdgeInsets.all(4.0),  // Optional: add padding if needed
+                        child: item.network == "Impact" ?Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'via',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 8,
+                              ),
+                            ),
+                            SizedBox(width: 5),  // Optional: add some spacing between the text and the image
+                            Image.asset(
+                              'assets/images/impact_logo_small.webp',
+                              width: 20,  // Adjust image size if needed
+                              height: 20, // Adjust image size if needed
+                            ),
+                          ],
+                        )
+                        : Container()
+                      ),
 
                       // Best Offer container
                       Container(

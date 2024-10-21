@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/database%20access/database_service.dart';
 import 'package:shop_app/screens/Dashboard/dashboard_screen.dart';
+import 'package:shop_app/screens/barcode_offers/Helpers/offerSorting.dart';
 import 'package:shop_app/screens/init_screen.dart';
 import 'package:shop_app/screens/scan_history/search_history.dart';
 import '../../objects/Product.dart'; 
@@ -28,6 +29,7 @@ class _ProductListState extends State<ProductList> {
   late List<Product> _currentProducts;
   late List<Product> _specialProducts;
   String _selectedSort = 'Relevance'; // State variable for dropdown value
+  OfferSorting sorter = OfferSorting();
 
   @override
   void initState() {
@@ -98,28 +100,33 @@ class _ProductListState extends State<ProductList> {
             ),
             
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.fromLTRB(16,5,16,5),
               child:Container(
-                width: 40,
-                height: 20,
+                width: 158,
+                height: 27,
                 decoration: BoxDecoration(
-                  color: Colors.blueGrey,
-                  borderRadius: BorderRadius.circular(4.0),
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(6.0),
                 ),
                 
                 child: ElevatedButton(
                   onPressed: ()  {
                     DatabaseService db = DatabaseService();
+                    db.analytics("apes@gmail.com");
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => Dashboard(
                                       products: _currentProducts,
-                                      specialOffers: db.getDashboardOffers(_currentProducts),
+                                      specialOffers: sorter.getDashboardOffers(_currentProducts),
                                     ),
                         ),
                       );},
-                  child: const Text("Dashboard"),
+                  style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, // Background color
+              foregroundColor: Colors.white, // Text color
+            ),
+                  child: const Text("Compare Offers",),
                 ),
                     ),
             ),
@@ -179,12 +186,67 @@ class _ProductListState extends State<ProductList> {
     List<Product> sortedProducts = [];
 
     if (newValue == 'Price') {
+      showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      return const AlertDialog(
+                        content: Row(
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(width: 20),
+                            Text('Sorting...', style: TextStyle(fontSize: 13),),
+                          ],
+                        ),
+                      );
+                    },
+                  );
       sortedProducts = await postToBackend(widget.barcodeValue, "price");
+
+      if (Navigator.of(context).canPop()) {
+                            Navigator.of(context).pop();}
     } else if (newValue == 'Commission') {
+      showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      return const AlertDialog(
+                        content: Row(
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(width: 20),
+                            Text('Sorting...', style: TextStyle(fontSize: 13),),
+                          ],
+                        ),
+                      );
+                    },
+                  );
       sortedProducts = await postToBackend(widget.barcodeValue, "commission");
 
+      if (Navigator.of(context).canPop()) {
+                            Navigator.of(context).pop();}
+
     } else if (newValue == 'Relevance') {
+      showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      return const AlertDialog(
+                        content: Row(
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(width: 20),
+                            Text('Sorting...', style: TextStyle(fontSize: 13),),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+
       sortedProducts = await postToBackend(widget.barcodeValue, "value");
+
+      if (Navigator.of(context).canPop()) {
+                            Navigator.of(context).pop();}
     }
 
     setState(() {
